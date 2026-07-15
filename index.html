@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gabriel Capinzaiki | Web Designer</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FDFBF7'/><text x='50' y='72' font-family='sans-serif' font-weight='bold' font-size='55' text-anchor='middle' tracking='-2' fill='%231A3626'>GC<tspan fill='%23A3B899'>.</tspan></text></svg>">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Space Grotesk (Títulos) e Outfit (Textos) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons para ícones modernos -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: {
+                            DEFAULT: '#FDFBF7', // Fundo principal
+                            100: '#F5F2E9', // Fundo secundário (seções)
+                            200: '#EBE5D5'
+                        },
+                        green: {
+                            DEFAULT: '#1A3626', // Texto principal e botões
+                            light: '#2C5C40', // Hover
+                            accent: '#A3B899' // Detalhes sutis
+                        }
+                    },
+                    fontFamily: {
+                        heading: ['"Space Grotesk"', 'sans-serif'],
+                        body: ['"Outfit"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: theme('colors.cream.DEFAULT');
+            color: theme('colors.green.DEFAULT');
+            font-family: theme('fontFamily.body');
+        }
+        
+        h1, h2, h3, h4, h5, h6, .font-heading {
+            font-family: theme('fontFamily.heading');
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Efeito de hover nas imagens do portfolio */
+        .project-card:hover .project-image {
+            transform: scale(1.05);
+        }
+
+        @keyframes scrollSites {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50%); }
+        }
+        .animate-scroll-sites {
+            animation: scrollSites 15s linear infinite;
+        }
+        .animate-scroll-sites:hover {
+            animation-play-state: paused;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-green-light selection:text-cream">
+
+    <header class="fixed w-full top-0 z-50 bg-cream/90 backdrop-blur-md border-b border-green-accent/30 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 py-5 flex justify-between items-center">
+            <a href="#" class="font-heading font-bold text-xl tracking-tight text-green relative group">
+                GC<span class="text-green-accent">.</span>
+                <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green transition-all group-hover:w-full"></span>
+            </a>
+            
+            <nav class="hidden md:flex items-center gap-8 font-medium text-sm tracking-wide">
+                <a href="#sobre" class="hover:text-green-light transition-colors">Sobre</a>
+                <a href="#portfolio" class="hover:text-green-light transition-colors">Projetos</a>
+                <a href="https://wa.me/5514997464443?text=Ol%C3%A1%2C%20tenho%20interesse%20em%20desenvolver%20um%20site%20para%20o%20meu%20neg%C3%B3cio%21" target="_blank" class="px-5 py-2.5 bg-green text-cream rounded-full hover:bg-green-light transition-colors duration-300 shadow-lg shadow-green/20">
+                    Iniciar Projeto
+                </a>
+            </nav>
+
+            <!-- Menu Mobile Toggle (Simplificado para o visual) -->
+            <button class="md:hidden text-green text-2xl">
+                <i class="ph ph-list"></i>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section id="sobre" class="min-h-[90vh] flex items-center pt-24 pb-12 px-6 lg:px-12 max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center w-full">
+                
+                <div class="max-w-2xl">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cream-100 border border-green-accent/40 text-sm font-medium mb-8 fade-in-up">
+                        <span class="w-2 h-2 rounded-full bg-green-light animate-pulse"></span>
+                        Disponível para novos projetos
+                    </div>
+                    
+                    <h1 class="text-5xl lg:text-7xl font-bold font-heading leading-[1.1] mb-6 fade-in-up delay-100">
+                        Gabriel <br>
+                        <span class="text-green-light relative">
+                            Capinzaiki
+                            <svg class="absolute w-full h-3 -bottom-1 left-0 text-green-accent/40" viewBox="0 0 100 10" preserveAspectRatio="none">
+                                <path d="M0 5 Q 50 10 100 5" stroke="currentColor" stroke-width="4" fill="transparent"/>
+                            </svg>
+                        </span>
+                    </h1>
+                    
+                    <h2 class="text-xl lg:text-2xl font-medium text-green-light/80 mb-8 font-heading uppercase tracking-widest fade-in-up delay-200">
+                        Web Designer
+                    </h2>
+                    
+                    <p class="text-lg lg:text-xl text-green/80 leading-relaxed mb-10 fade-in-up delay-300">
+                        Sua marca merece uma presença digital que impressiona e, acima de tudo, <strong class="text-green font-semibold">converte</strong>. 
+                        Muito além de um layout bonito, desenvolvo sites estratégicos, rápidos e totalmente otimizados para destacar o seu negócio na internet.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 fade-in-up delay-300">
+                        <a href="#portfolio" class="px-8 py-4 bg-green text-cream rounded-full font-medium text-center hover:bg-green-light transition-all shadow-xl shadow-green/20 flex items-center justify-center gap-2 group">
+                            Ver meus trabalhos
+                            <i class="ph ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                        <a href="https://wa.me/5514997464443?text=Ol%C3%A1%2C%20tenho%20interesse%20em%20desenvolver%20um%20site%20para%20o%20meu%20neg%C3%B3cio%21" target="_blank" class="px-8 py-4 bg-transparent border border-green/30 text-green rounded-full font-medium text-center hover:bg-green/5 transition-colors">
+                            Bater um papo
+                        </a>
+                    </div>
+                </div>
+
+                <div class="relative hidden lg:flex justify-center items-center h-[500px] fade-in-up delay-200">
+                    <!-- Elemento decorativo abstrato moderno -->
+                    <div class="absolute inset-0 bg-gradient-to-tr from-green-accent/20 to-cream-100 rounded-[3rem] rotate-3 transform transition-transform hover:rotate-6 duration-700"></div>
+                    <div class="relative z-10 w-4/5 h-full bg-cream-100 rounded-[2.5rem] border border-white/50 shadow-2xl flex flex-col overflow-hidden">
+                        <div class="absolute top-0 w-full h-10 bg-cream-200/80 backdrop-blur z-20 flex items-center px-4 gap-2 border-b border-green-accent/20">
+                            <div class="w-3 h-3 rounded-full bg-red-400/80"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-400/80"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-400/80"></div>
+                            <span class="ml-4 text-xs font-medium text-green/40">sites desenvolvidos</span>
+                        </div>
+                        
+                        <!-- Container de rolagem (com as novas imagens) -->
+                        <div class="w-full h-full pt-10 overflow-hidden relative bg-green/5">
+                            <div class="animate-scroll-sites flex flex-col gap-4 p-4">
+                                <img src="site2.png" class="w-full rounded-xl shadow-md border border-green-accent/20" alt="Site 2">
+                                <img src="site3.png" class="w-full rounded-xl shadow-md border border-green-accent/20" alt="Site 3">
+                                <!-- Duplicação para manter o loop infinito fluido -->
+                                <img src="site2.png" class="w-full rounded-xl shadow-md border border-green-accent/20" alt="Site 2">
+                                <img src="site3.png" class="w-full rounded-xl shadow-md border border-green-accent/20" alt="Site 3">
+                            </div>
+                            
+                            <!-- Gradientes para disfarçar o corte -->
+                            <div class="absolute top-10 w-full h-16 bg-gradient-to-b from-cream-100 to-transparent z-10 pointer-events-none"></div>
+                            <div class="absolute bottom-0 w-full h-16 bg-gradient-to-t from-cream-100 to-transparent z-10 pointer-events-none"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="portfolio" class="py-24 bg-cream-100 rounded-t-[3rem] lg:rounded-t-[5rem]">
+            <div class="max-w-7xl mx-auto px-6 lg:px-12">
+                
+                <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+                    <div class="max-w-2xl">
+                        <h2 class="text-4xl lg:text-5xl font-bold font-heading mb-4 text-green">Obras Digitais</h2>
+                        <p class="text-lg text-green/70">
+                            Uma seleção dos meus projetos mais recentes. Cada site é construído do zero pensando na identidade única do cliente e nos resultados que ele deseja alcançar.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Grid de Projetos -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+                    
+                    <!-- Projeto 1: Banda Untold -->
+                    <a href="https://www.bandauntold.com/" target="_blank" rel="noopener noreferrer" class="group project-card block bg-cream rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-shadow duration-500 border border-green-accent/10">
+                        <div class="relative w-full aspect-[16/10] overflow-hidden bg-green">
+                            <img src="site1.png" alt="Preview do site Banda Untold" class="w-full h-full object-cover opacity-90 project-image transition-transform duration-700 ease-out">
+                            <div class="absolute inset-0 bg-green/10 group-hover:bg-transparent transition-colors duration-500"></div>
+                            
+                            <!-- Badges -->
+                            <div class="absolute top-4 left-4 flex gap-2">
+                                <span class="bg-cream/90 backdrop-blur text-green text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">Música</span>
+                                <span class="bg-cream/90 backdrop-blur text-green text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">Website</span>
+                            </div>
+                            
+                            <!-- Botão Flutuante -->
+                            <div class="absolute inset-0 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div class="bg-cream text-green w-16 h-16 rounded-full flex items-center justify-center shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                    <i class="ph ph-arrow-up-right text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-8">
+                            <h3 class="text-2xl font-bold font-heading mb-3 text-green group-hover:text-green-light transition-colors">Banda Untold</h3>
+                            <p class="text-green/70 mb-6 line-clamp-2">
+                                Presença digital completa para a banda, com design imersivo que reflete a identidade musical, galeria, agenda de shows e integração de mídia.
+                            </p>
+                            <div class="flex items-center text-sm font-semibold text-green-light uppercase tracking-wider gap-2">
+                                Acessar site <i class="ph ph-arrow-right"></i>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Projeto 2 (Placeholder) -->
+                    <div class="group project-card block bg-cream rounded-3xl overflow-hidden shadow-sm border border-green-accent/10 opacity-70 relative">
+                        <div class="relative w-full aspect-[16/10] overflow-hidden bg-cream-200 flex items-center justify-center">
+                            <i class="ph ph-image text-5xl text-green/20 project-image transition-transform duration-700"></i>
+                            <div class="absolute top-4 left-4 flex gap-2">
+                                <span class="bg-cream/90 backdrop-blur text-green text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">E-commerce</span>
+                            </div>
+                        </div>
+                        <div class="p-8">
+                            <h3 class="text-2xl font-bold font-heading mb-3 text-green/50">Espaço Reservado</h3>
+                            <p class="text-green/50 mb-6">
+                                Este espaço está reservado para o seu próximo grande projeto. Vamos construí-lo juntos?
+                            </p>
+                            <div class="flex items-center text-sm font-semibold text-green-light/50 uppercase tracking-wider gap-2">
+                                Em breve <i class="ph ph-timer"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Ajustado para fundo claro (cream) e texto escuro (green) conforme solicitado -->
+        <section id="contato" class="py-32 px-6 lg:px-12 bg-cream text-green text-center relative overflow-hidden rounded-t-[3rem] lg:rounded-t-[5rem] -mt-10 border-t border-green-accent/20 shadow-[0_-20px_40px_rgba(0,0,0,0.03)]">
+            <!-- Decorações de fundo sutis para tema claro -->
+            <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-40">
+                <div class="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-cream-200 blur-3xl"></div>
+                <div class="absolute bottom-0 right-0 w-80 h-80 rounded-full bg-green-accent/20 blur-3xl"></div>
+            </div>
+
+            <div class="max-w-3xl mx-auto relative z-10">
+                <h2 class="text-5xl lg:text-7xl font-bold font-heading mb-6 text-green">Pronto para transformar sua presença online?</h2>
+                <p class="text-xl md:text-2xl text-green-light font-medium mb-12">
+                    Não deixe seus clientes escaparem por causa de um site amador. Invista em uma plataforma que transmite credibilidade e vende por você 24h por dia.
+                </p>
+                <a href="https://wa.me/5514997464443?text=Ol%C3%A1%2C%20tenho%20interesse%20em%20desenvolver%20um%20site%20para%20o%20meu%20neg%C3%B3cio%21" target="_blank" class="inline-block px-10 py-5 bg-green text-cream rounded-full font-bold text-lg hover:bg-green-light hover:scale-105 transition-all shadow-xl shadow-green/20">
+                    Solicitar Orçamento Agora
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-green border-t border-green-light text-cream/80 py-8 px-6 lg:px-12">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="font-medium">© 2026 Gabriel Capinzaiki. Todos os direitos reservados.</p>
+            <div class="flex gap-6 text-2xl">
+                <a href="https://www.instagram.com/gabrielqmc/" target="_blank" class="hover:text-cream transition-colors" aria-label="Instagram"><i class="ph ph-instagram-logo"></i></a>
+                <a href="https://www.linkedin.com/in/gabrielqueirozmc/" target="_blank" class="hover:text-cream transition-colors" aria-label="LinkedIn"><i class="ph ph-linkedin-logo"></i></a>
+                <a href="https://www.behance.net/gabrielqueirozm" target="_blank" class="hover:text-cream transition-colors" aria-label="Behance"><i class="ph ph-behance-logo"></i></a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
