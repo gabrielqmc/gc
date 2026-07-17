@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Flappy Foga</title>
+    <style>
+        /* Reset de estilos e configurações de tela cheia */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none; /* Previne seleção de texto */
+            -webkit-user-drag: none; /* Previne arrastar imagem */
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Impede rolagem da tela */
+            background-color: #000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            touch-action: none; /* Previne zoom e gestos nativos em mobile */
+        }
+
+        /* Container principal do jogo */
+        #game-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* O Canvas onde o jogo será renderizado */
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        /* Camada de Interface de Usuário (HUD, Telas) */
+        .ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Deixa os cliques passarem para o canvas por padrão */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        /* Elementos interativos dentro da UI devem capturar eventos */
+        .ui-content {
+            pointer-events: auto;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 4px solid #73bf2e;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 90%;
+        }
+
+        .ui-content.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        h1 {
+            color: #ff5722;
+            font-size: 3rem;
+            text-shadow: 2px 2px 0px #fff, 4px 4px 0px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        h2 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        p.instructions {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+        }
+
+        /* Estilo dos Botões */
+        button {
+            background: linear-gradient(to bottom, #73bf2e, #558c22);
+            color: white;
+            border: 3px solid #fff;
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.1s, filter 0.2s;
+            outline: none;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        button:hover {
+            filter: brightness(1.1);
+        }
+
+        /* Placar (Score) e HUD superior */
+        .hud {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: 900;
+            color: white;
+            text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 3px 3px 5px rgba(0,0,0,0.5);
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* Controles de HUD (Som, Pause) */
+        .controls {
+            pointer-events: auto;
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            background: rgba(255,255,255,0.8);
+            border: 2px solid #333;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            color: #333;
+            padding: 0;
+        }
+
+        /* Classes utilitárias para mostrar/esconder */
+        .hidden { display: none !important; }
+
+        /* Animação de Flash na tela quando colide */
+        #flash {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        /* Animação de tremor na tela (Camera Shake) */
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+        .shake { animation: shake 0.3s; }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <!-- Canvas principal do jogo -->
+        <canvas id="gameCanvas"></canvas>
+        
+        <!-- Efeito visual de colisão -->
+        <div id="flash"></div>
+
+        <!-- HUD: Placar em tempo real e controles -->
+        <div class="hud" id="hud">
+            <div class="score-display" id="currentScore">0</div>
+            <div class="controls">
+                <button class="icon-btn" id="btnPause">⏸</button>
+                <button class="icon-btn" id="btnSound">🔊</button>
+            </div>
+        </div>
+
+        <!-- Tela Inicial -->
+        <div class="ui-layer" id="startScreen">
+            <div class="ui-content active">
+                <h1>Flappy Foga</h1>
+                <p class="instructions">Toque na tela ou pressione ESPAÇO para voar.</p>
+                <button id="btnPlay">JOGAR</button>
+            </div>
+        </div>
+
+        <!-- Tela de Game Over -->
+        <div class="ui-layer hidden" id="gameOverScreen">
+            <div class="ui-content" id="gameOverContent">
+                <h2>Game Over</h2>
+                <div style="font-size: 1.5rem; margin-bottom: 10px;">Score: <span id="finalScore" style="font-weight: bold; color: #ff5722;">0</span></div>
+                <div style="font-size: 1.2rem; color: #666; margin-bottom: 20px;">High Score: <span id="highScore" style="font-weight: bold;">0</span></div>
+                <button id="btnRestart">JOGAR NOVAMENTE</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Referências do DOM
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d', { alpha: false }); // Otimização: alpha false para fundo sólido opaco
+        const container = document.getElementById('game-container');
+        const startScreen = document.getElementById('startScreen');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const gameOverContent = document.getElementById('gameOverContent');
+        const hud = document.getElementById('hud');
+        const scoreElement = document.getElementById('currentScore');
+        const finalScoreElement = document.getElementById('finalScore');
+        const highScoreElement = document.getElementById('highScore');
+        const flashElement = document.getElementById('flash');
+        const btnPlay = document.getElementById('btnPlay');
+        const btnRestart = document.getElementById('btnRestart');
+        const btnPause = document.getElementById('btnPause');
+        const btnSound = document.getElementById('btnSound');
+
+        // Constantes e Estados do Jogo
+        const STATE = {
+            START: 0,
+            PLAYING: 1,
+            PAUSED: 2,
+            GAME_OVER: 3
+        };
+        let currentState = STATE.START;
+
+        // Imagens do Jogo
+        const birdImg = new Image();
+        birdImg.src = 'foga.png'; // Utilizando o PNG enviado conforme instrução
+        let isImageLoaded = false;
+        birdImg.onload = () => { isImageLoaded = true; };
+
+        // Variáveis de Jogo
+        let score = 0;
+        let highScore = localStorage.getItem('flappyHighScore') || 0;
+        let frames = 0; // Contador de frames para animações
+        let scaleRatio = 1; // Para adaptar a física ao tamanho da tela
+        let distanceSinceLastSpawn = 0; // Controle de spawn por distância
+        
+        // Configurações Globais (ajustadas dinamicamente no resize)
+        const config = {
+            gravity: 0,
+            jumpStrength: 0,
+            basePipeSpeed: 0,
+            currentPipeSpeed: 0,
+            pipeSpawnDistance: 0, // Distância em pixels entre os canos
+            pipeGap: 0,
+            birdSize: 0
+        };
+
+        // Sistema de Som usando Web Audio API puro
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let soundEnabled = true;
+
+        const SoundEngine = {
+            playTone: function(frequency, type, duration, vol=0.1) {
+                if (!soundEnabled || audioCtx.state === 'suspended') return;
+                
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                oscillator.type = type;
+                oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+                
+                gainNode.gain.setValueAtTime(vol, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + duration);
+            },
+            
+            jump: function() {
+                // Efeito sonoro subindo (pulo)
+                if (!soundEnabled) return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.1);
+            },
+            
+            score: function() {
+                // Efeito sonoro agudo e rápido (ponto)
+                this.playTone(1200, 'square', 0.1, 0.05);
+                setTimeout(() => this.playTone(1600, 'square', 0.1, 0.05), 100);
+            },
+            
+            hit: function() {
+                // Efeito sonoro grave descendo (colisão)
+                if (!soundEnabled) return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            }
+        };
+
+        // Objeto do Jogador (Pássaro/Foga)
+        const bird = {
+            x: 0,
+            y: 0,
+            velocity: 0,
+            rotation: 0,
+            radius: 0,
+
+            reset() {
+                this.x = canvas.width * 0.25; // 25% da largura da tela
+                this.y = canvas.height * 0.4; // 40% da altura da tela
+                this.velocity = 0;
+                this.rotation = 0;
+                this.radius = config.birdSize / 2 * 0.8; // Hitbox um pouco menor que a imagem visual
+            },
+
+            jump() {
+                this.velocity = config.jumpStrength;
+                SoundEngine.jump();
+            },
+
+            update() {
+                // Aplica gravidade
+                this.velocity += config.gravity;
+                this.y += this.velocity;
+
+                // Calcula rotação com base na velocidade
+                // Se caindo (velocidade positiva), rotaciona pra baixo (+90deg em radianos = ~1.57)
+                // Se subindo (velocidade negativa), rotaciona pra cima (-20deg em radianos = ~-0.35)
+                if (this.velocity < 0) {
+                    this.rotation = Math.max(-0.35, this.rotation - 0.1);
+                } else {
+                    this.rotation = Math.min(1.57, this.rotation + 0.05);
+                }
+
+                // Colisão com o chão
+                if (this.y + config.birdSize/2 >= ground.y) {
+                    this.y = ground.y - config.birdSize/2;
+                    triggerGameOver();
+                }
+
+                // Colisão com o teto
+                if (this.y - config.birdSize/2 <= 0) {
+                    this.y = config.birdSize/2;
+                    this.velocity = 0; // Bate a cabeça e começa a cair
+                }
+            },
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+                
+                // Desenha a imagem ou um placeholder se não carregar
+                if (isImageLoaded) {
+                    ctx.drawImage(birdImg, -config.birdSize/2, -config.birdSize/2, config.birdSize, config.birdSize);
+                } else {
+                    // Fallback: Quadrado amarelo
+                    ctx.fillStyle = '#ffc107';
+                    ctx.fillRect(-config.birdSize/2, -config.birdSize/2, config.birdSize, config.birdSize);
+                }
+                
+                // Debug Hitbox (descomente para ver)
+                // ctx.beginPath();
+                // ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+                // ctx.strokeStyle = 'red';
+                // ctx.stroke();
+
+                ctx.restore();
+            }
+        };
+
+        // Gerenciador de Canos (Obstáculos)
+        const pipes = {
+            items: [],
+            width: 0,
+            
+            reset() {
+                this.items = [];
+                this.width = canvas.width > 600 ? 80 : canvas.width * 0.15; // Largura do cano responsiva
+                distanceSinceLastSpawn = config.pipeSpawnDistance; // Força spawn imediato no início
+            },
+
+            update() {
+                // Atualiza a distância percorrida para o spawn
+                distanceSinceLastSpawn += config.currentPipeSpeed;
+
+                // Adiciona novos canos baseados na distância percorrida em vez de frames
+                if (distanceSinceLastSpawn >= config.pipeSpawnDistance) {
+                    distanceSinceLastSpawn = 0;
+                    
+                    // Altura mínima do cano é 10% da tela. Abertura varia no centro.
+                    let minPipeHeight = canvas.height * 0.1;
+                    let maxPos = ground.y - minPipeHeight - config.pipeGap;
+                    
+                    // Posição Y do topo do cano inferior
+                    let topY = Math.random() * (maxPos - minPipeHeight) + minPipeHeight;
+                    
+                    this.items.push({
+                        x: canvas.width,
+                        topY: topY,            // Altura do cano de cima
+                        bottomY: topY + config.pipeGap, // Início do cano de baixo
+                        passed: false          // Flag para saber se já pontuou
+                    });
+                }
+
+                for (let i = 0; i < this.items.length; i++) {
+                    let p = this.items[i];
+                    p.x -= config.currentPipeSpeed;
+
+                    // Colisão
+                    // Área do cano de cima: X entre p.x e p.x+width, Y entre 0 e p.topY
+                    // Área do cano de baixo: X entre p.x e p.x+width, Y entre p.bottomY e ground.y
+                    let closestX = Math.max(p.x, Math.min(bird.x, p.x + this.width));
+                    
+                    // Checa colisão superior
+                    let closestYTop = Math.max(0, Math.min(bird.y, p.topY));
+                    let distanceXTop = bird.x - closestX;
+                    let distanceYTop = bird.y - closestYTop;
+                    
+                    // Checa colisão inferior
+                    let closestYBot = Math.max(p.bottomY, Math.min(bird.y, ground.y));
+                    let distanceXBot = bird.x - closestX;
+                    let distanceYBot = bird.y - closestYBot;
+
+                    if ((distanceXTop * distanceXTop + distanceYTop * distanceYTop) < (bird.radius * bird.radius) ||
+                        (distanceXBot * distanceXBot + distanceYBot * distanceYBot) < (bird.radius * bird.radius)) {
+                        triggerGameOver();
+                    }
+
+                    // Pontuação (passou o cano)
+                    if (p.x + this.width < bird.x && !p.passed) {
+                        score++;
+                        scoreElement.innerText = score;
+                        p.passed = true;
+                        SoundEngine.score();
+                        
+                        // Aumenta a velocidade gradativamente a cada ponto
+                        config.currentPipeSpeed = Math.min(
+                            12 * scaleRatio, // Velocidade máxima limite
+                            config.currentPipeSpeed + (0.3 * scaleRatio) // Incremento de velocidade por cano
+                        );
+                    }
+
+                    // Remove canos que saíram da tela
+                    if (p.x + this.width < 0) {
+                        this.items.shift();
+                        i--; // Ajusta o índice após remoção
+                    }
+                }
+            },
+
+            draw() {
+                for (let i = 0; i < this.items.length; i++) {
+                    let p = this.items[i];
+                    
+                    // Cor do cano inspirado no Flappy Bird
+                    ctx.fillStyle = '#73bf2e';
+                    ctx.strokeStyle = '#558c22';
+                    ctx.lineWidth = 4;
+
+                    // Cano Superior
+                    ctx.fillRect(p.x, 0, this.width, p.topY);
+                    ctx.strokeRect(p.x, 0, this.width, p.topY);
+                    
+                    // Borda grossa na ponta do cano superior
+                    ctx.fillRect(p.x - 5, p.topY - 30, this.width + 10, 30);
+                    ctx.strokeRect(p.x - 5, p.topY - 30, this.width + 10, 30);
+
+                    // Cano Inferior
+                    let bottomHeight = ground.y - p.bottomY;
+                    ctx.fillRect(p.x, p.bottomY, this.width, bottomHeight);
+                    ctx.strokeRect(p.x, p.bottomY, this.width, bottomHeight);
+                    
+                    // Borda grossa na ponta do cano inferior
+                    ctx.fillRect(p.x - 5, p.bottomY, this.width + 10, 30);
+                    ctx.strokeRect(p.x - 5, p.bottomY, this.width + 10, 30);
+                }
+            }
+        };
+
+        // Cenário e Chão (Background & Ground)
+        const ground = {
+            y: 0,
+            height: 0,
+            x: 0,
+
+            update() {
+                // Move o chão na mesma velocidade que os canos para dar sensação de movimento
+                this.x -= config.currentPipeSpeed;
+                if (this.x <= -canvas.width) {
+                    this.x = 0;
+                }
+            },
+
+            draw() {
+                // Posição do chão é os 15% inferiores da tela
+                this.height = canvas.height * 0.15;
+                this.y = canvas.height - this.height;
+
+                // Desenha a terra
+                ctx.fillStyle = '#ded895';
+                ctx.fillRect(0, this.y, canvas.width, this.height);
+
+                // Desenha a grama
+                ctx.fillStyle = '#73bf2e';
+                ctx.fillRect(0, this.y, canvas.width, 15);
+
+                // Desenha o padrão de listras inclinadas simulando movimento
+                ctx.save();
+                ctx.beginPath();
+                ctx.rect(0, this.y + 15, canvas.width, this.height - 15);
+                ctx.clip(); // Corta para não desenhar fora do chão
+
+                ctx.strokeStyle = '#c4be7b';
+                ctx.lineWidth = 10;
+                for (let i = 0; i < canvas.width * 2; i += 30) {
+                    ctx.beginPath();
+                    // Desenha linhas inclinadas que se movem com o offset this.x
+                    ctx.moveTo(this.x + i, this.y + 15);
+                    ctx.lineTo(this.x + i - 30, canvas.height);
+                    ctx.stroke();
+                }
+                ctx.restore();
+            }
+        };
+
+        const clouds = {
+            items: [],
+            
+            reset() {
+                this.items = [];
+                // Gera algumas nuvens iniciais
+                for(let i=0; i<5; i++) {
+                    this.items.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * (canvas.height * 0.5),
+                        size: Math.random() * 30 + 30,
+                        speed: Math.random() * 0.5 + 0.1
+                    });
+                }
+            },
+
+            update() {
+                for (let i = 0; i < this.items.length; i++) {
+                    let c = this.items[i];
+                    c.x -= c.speed; // Nuvens se movem devagarzinho
+                    if (c.x + c.size * 3 < 0) {
+                        c.x = canvas.width + c.size;
+                        c.y = Math.random() * (canvas.height * 0.5);
+                    }
+                }
+            },
+
+            draw() {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                for (let i = 0; i < this.items.length; i++) {
+                    let c = this.items[i];
+                    ctx.beginPath();
+                    ctx.arc(c.x, c.y, c.size, 0, Math.PI * 2);
+                    ctx.arc(c.x + c.size * 0.8, c.y - c.size * 0.3, c.size * 0.8, 0, Math.PI * 2);
+                    ctx.arc(c.x + c.size * 1.5, c.y, c.size * 0.9, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+        }
+
+        function drawBackground() {
+            // Céu com gradiente
+            let gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#4ec0ca');
+            gradient.addColorStop(1, '#a1e4eb');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Funções de Controle e Lógica Central
+        function resize() {
+            // O jogo ocupa 100% da janela (responsivo)
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            // Recalcula constantes físicas para manter a proporção consistente
+            // Baseamos o scaleRatio em uma tela de 800px de altura
+            scaleRatio = canvas.height / 800;
+
+            config.gravity = 0.25 * scaleRatio;
+            config.jumpStrength = -6 * scaleRatio;
+            
+            // Inicia bem devagar
+            config.basePipeSpeed = 1.5 * scaleRatio * (canvas.width / 400); 
+            if(config.basePipeSpeed > 3.5) config.basePipeSpeed = 3.5; // Limite máximo inicial
+            if(config.basePipeSpeed < 1.5) config.basePipeSpeed = 1.5; // Limite mínimo para não ficar parado
+            
+            // Se o jogo não estiver rodando, a velocidade atual acompanha a base
+            if (currentState !== STATE.PLAYING) {
+                config.currentPipeSpeed = config.basePipeSpeed;
+            }
+            
+            config.birdSize = Math.max(35, canvas.height * 0.05); // Tamanho adaptativo do sprite
+            config.pipeGap = config.birdSize * 4.5; // Espaço ligeiramente maior para compensar alta velocidade no final
+
+            // Define a distância fixa entre um cano e outro em pixels
+            config.pipeSpawnDistance = canvas.width > 600 ? 350 : Math.max(canvas.width * 0.7, 250);
+
+            // Se o jogo estivesse pausado ou na tela inicial, desenha uma vez para atualizar o fundo
+            if (currentState !== STATE.PLAYING) {
+                draw();
+            }
+        }
+
+        window.addEventListener('resize', resize);
+
+        function initGame() {
+            score = 0;
+            scoreElement.innerText = score;
+            frames = 0;
+            config.currentPipeSpeed = config.basePipeSpeed; // Reseta a velocidade para o modo devagar
+            bird.reset();
+            pipes.reset();
+            clouds.reset();
+            hud.classList.remove('hidden');
+            startScreen.classList.add('hidden');
+            gameOverScreen.classList.add('hidden');
+            currentState = STATE.PLAYING;
+            
+            // Retoma AudioContext caso o navegador tenha bloqueado autoplay
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            
+            bird.jump(); // Dá um primeiro pulinho
+        }
+
+        function triggerGameOver() {
+            currentState = STATE.GAME_OVER;
+            SoundEngine.hit();
+            
+            // Efeito visual de Flash
+            flashElement.style.opacity = '1';
+            setTimeout(() => flashElement.style.opacity = '0', 50);
+
+            // Efeito visual de Tremedeira (Camera shake)
+            container.classList.add('shake');
+            setTimeout(() => container.classList.remove('shake'), 300);
+
+            // Verifica High Score
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('flappyHighScore', highScore);
+            }
+
+            // Atualiza Textos da UI
+            finalScoreElement.innerText = score;
+            highScoreElement.innerText = highScore;
+
+            // Mostra a tela de Game Over com um pequeno atraso para o impacto
+            setTimeout(() => {
+                hud.classList.add('hidden');
+                gameOverScreen.classList.remove('hidden');
+                // Pequeno delay na classe active para disparar a transição CSS
+                setTimeout(() => gameOverContent.classList.add('active'), 10);
+            }, 300);
+        }
+
+        // Game Loop
+        function update() {
+            if (currentState !== STATE.PLAYING) return;
+
+            bird.update();
+            pipes.update();
+            ground.update();
+            clouds.update();
+            
+            frames++;
+        }
+
+        function draw() {
+            // Limpa o canvas e desenha elementos na ordem (z-index natural)
+            drawBackground();
+            clouds.draw();
+            pipes.draw();
+            ground.draw();
+            bird.draw();
+
+            // Desenho do Pause overlay
+            if (currentState === STATE.PAUSED) {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 40px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('PAUSADO', canvas.width/2, canvas.height/2);
+            }
+        }
+
+        function loop() {
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        // Controles e Input
+        function handleInput(e) {
+            // Previne comportamento padrão (como rolagem ou duplo tap zoom)
+            if(e.type === 'touchstart' || (e.type === 'keydown' && e.code === 'Space')) {
+                e.preventDefault();
+            }
+
+            if (currentState === STATE.START) {
+                // Ignora cliques no overlay para não conflitar com botões
+                if (e.target.tagName !== 'BUTTON') initGame();
+            } else if (currentState === STATE.PLAYING) {
+                bird.jump();
+            } else if (currentState === STATE.GAME_OVER) {
+                // Não faz nada via tela, força a clicar no botão para evitar recomeço acidental
+            }
+        }
+
+        // Eventos Mouse/Touch/Teclado
+        canvas.addEventListener('mousedown', handleInput);
+        canvas.addEventListener('touchstart', handleInput, { passive: false });
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                handleInput(e);
+            }
+        });
+
+        // Eventos dos Botões da UI
+        btnPlay.addEventListener('click', initGame);
+        
+        btnRestart.addEventListener('click', () => {
+            gameOverContent.classList.remove('active');
+            setTimeout(initGame, 200); // Espera a animação de saída
+        });
+
+        btnPause.addEventListener('click', () => {
+            if (currentState === STATE.PLAYING) {
+                currentState = STATE.PAUSED;
+                btnPause.innerText = '▶';
+            } else if (currentState === STATE.PAUSED) {
+                currentState = STATE.PLAYING;
+                btnPause.innerText = '⏸';
+            }
+        });
+
+        btnSound.addEventListener('click', () => {
+            soundEnabled = !soundEnabled;
+            btnSound.innerText = soundEnabled ? '🔊' : '🔇';
+        });
+
+        // Previne menus de contexto no clique direito do mouse
+        window.addEventListener('contextmenu', e => e.preventDefault());
+
+        // Inicialização do Jogo
+        highScoreElement.innerText = highScore; // Atualiza a UI inicial com o high score do localStorage
+        resize(); // Configura tamanhos iniciais
+        drawBackground(); // Desenha tela de fundo inicialmente
+        ground.draw(); // Desenha o chão
+        requestAnimationFrame(loop); // Inicia o loop (estará rodando em branco até estado PLAYING)
+
+    </script>
+</body>
+</html>
