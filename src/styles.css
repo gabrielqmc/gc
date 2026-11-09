@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-padding-top: 5rem; }
+  body {
+    background-color: theme('colors.cream.DEFAULT');
+    color: theme('colors.green.DEFAULT');
+    font-family: theme('fontFamily.body');
+  }
+  h1, h2, h3, h4, h5, h6 { font-family: theme('fontFamily.heading'); }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+
+@keyframes fadeInUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Efeito de hover nas imagens do portfólio */
+.project-card:hover .project-image { transform: scale(1.05); }
+
+/* Carrossel do hero: duas cópias idênticas, cada uma com o mesmo espaçamento
+   no final, então -50% cai exatamente no início da segunda cópia (loop sem pulo). */
+@keyframes scrollSites {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-50%); }
+}
+.animate-scroll-sites { animation: scrollSites var(--duracao, 30s) linear infinite; }
+.animate-scroll-sites:hover { animation-play-state: paused; }
+
+/* Respeita quem prefere menos movimento */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .fade-in-up { animation: none; opacity: 1; transform: none; }
+  .animate-scroll-sites { animation: none; }
+  .project-card:hover .project-image { transform: none; }
+}

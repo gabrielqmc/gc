@@ -1,89 +1,90 @@
 <!DOCTYPE html>
+<!-- ARQUIVO GERADO AUTOMATICAMENTE (npm run gerar). Edite src/ e projetos.json, não este arquivo. -->
 <html lang="pt-BR" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Todos os Projetos | Gabriel Capinzaiki</title>
-    
+
+    <!-- SEO Básico -->
     <meta name="description" content="Explore o portfólio completo de Gabriel Capinzaiki. Sites estratégicos e de alta conversão para clínicas, advogados, músicos e diversos negócios.">
-    
+    <meta name="author" content="Gabriel Capinzaiki">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://web.capinzaiki.com.br/projetos.html">
+
+    <!-- Open Graph / Redes Sociais (WhatsApp, Facebook, LinkedIn) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Portfólio | Gabriel Capinzaiki">
+    <meta property="og:description" content="Sites estratégicos e de alta conversão para clínicas, advogados, músicos e diversos negócios.">
+    <meta property="og:image" content="https://web.capinzaiki.com.br/assets/img/og.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Gabriel Capinzaiki - Web Designer Portfolio">
+    <meta property="og:site_name" content="Gabriel Capinzaiki">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:url" content="https://web.capinzaiki.com.br/projetos.html">
+
+    <!-- Twitter Card (Twitter / X) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Portfólio | Gabriel Capinzaiki">
+    <meta name="twitter:description" content="Sites estratégicos e de alta conversão para clínicas, advogados, músicos e diversos negócios.">
+    <meta name="twitter:image" content="https://web.capinzaiki.com.br/assets/img/og.jpg">
+
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FDFBF7'/><text x='50' y='72' font-family='sans-serif' font-weight='bold' font-size='55' text-anchor='middle' tracking='-2' fill='%231A3626'>GC<tspan fill='%23A3B899'>.</tspan></text></svg>">
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FDFBF7'/><text x='50' y='72' font-family='sans-serif' font-weight='bold' font-size='55' text-anchor='middle' fill='%231A3626'>GC<tspan fill='%23A3B899'>.</tspan></text></svg>">
+
+    <!-- Fontes: Space Grotesk (títulos) e Outfit (textos) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Phosphor Icons -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        cream: {
-                            DEFAULT: '#FDFBF7',
-                            100: '#F5F2E9',
-                            200: '#EBE5D5'
-                        },
-                        green: {
-                            DEFAULT: '#1A3626',
-                            light: '#2C5C40',
-                            accent: '#A3B899'
-                        }
-                    },
-                    fontFamily: {
-                        heading: ['"Space Grotesk"', 'sans-serif'],
-                        body: ['"Outfit"', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Ícones (Phosphor, versão fixa, só o peso "regular") -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css">
 
-    <style>
-        body {
-            background-color: theme('colors.cream.DEFAULT');
-            color: theme('colors.green.DEFAULT');
-            font-family: theme('fontFamily.body');
-        }
-        h1, h2, h3, h4, h5, h6, .font-heading {
-            font-family: theme('fontFamily.heading');
-        }
-        .project-card:hover .project-image {
-            transform: scale(1.05);
-        }
-    </style>
+    <!-- CSS gerado pelo Tailwind (npm run build) -->
+    <link rel="stylesheet" href="assets/css/style.css?v=a017ebd0">
 </head>
 <body class="antialiased selection:bg-green-light selection:text-cream">
 
     <header class="fixed w-full top-0 z-50 bg-cream/90 backdrop-blur-md border-b border-green-accent/30 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-6 lg:px-12 py-5 flex justify-between items-center">
-            <a href="index.html" class="font-heading font-bold text-xl tracking-tight text-green relative group">
+            <a href="index.html" class="font-heading font-bold text-xl tracking-tight text-green relative group" aria-label="Gabriel Capinzaiki - início">
                 GC<span class="text-green-accent">.</span>
                 <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green transition-all group-hover:w-full"></span>
             </a>
-            
-            <nav class="hidden md:flex items-center gap-8 font-medium text-sm tracking-wide">
-                <a href="index.html" class="hover:text-green-light transition-colors flex items-center gap-2">
-                    <i class="ph ph-arrow-left"></i> Voltar ao Início
-                </a>
-                <a href="https://wa.me/5514997464443?text=Ol%C3%A1%2C%20gostei%20do%20seu%20portf%C3%B3lio%20e%20quero%20fazer%20um%20site%21" target="_blank" class="px-5 py-2.5 bg-green text-cream rounded-full hover:bg-green-light transition-colors duration-300 shadow-lg shadow-green/20">
+
+            <nav class="hidden md:flex items-center gap-8 font-medium text-sm tracking-wide" aria-label="Menu principal">
+                <a href="index.html#servicos" class="hover:text-green-light transition-colors">Serviços</a>
+                <a href="index.html#processo" class="hover:text-green-light transition-colors">Como funciona</a>
+                <a href="projetos.html" class="hover:text-green-light transition-colors">Projetos</a>
+                <a href="https://wa.me/5514997464443?text=Ol%C3%A1%2C%20tenho%20interesse%20em%20desenvolver%20um%20site%20para%20o%20meu%20neg%C3%B3cio!" target="_blank" rel="noopener" class="px-5 py-2.5 bg-green text-cream rounded-full hover:bg-green-light transition-colors duration-300 shadow-lg shadow-green/20">
                     Iniciar Projeto
                 </a>
             </nav>
+
+            <!-- Botão do menu mobile -->
+            <button id="menu-toggle" type="button" class="md:hidden text-green text-2xl w-11 h-11 -mr-2 flex items-center justify-center rounded-full hover:bg-green/5" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu-mobile">
+                <i class="ph ph-list" aria-hidden="true"></i>
+            </button>
         </div>
+
+        <!-- Menu mobile -->
+        <nav id="menu-mobile" class="md:hidden hidden border-t border-green-accent/30 bg-cream" aria-label="Menu mobile">
+            <div class="px-6 py-6 flex flex-col gap-1 font-medium text-lg">
+                <a href="index.html#servicos" class="py-3 border-b border-green-accent/20">Serviços</a>
+                <a href="index.html#processo" class="py-3 border-b border-green-accent/20">Como funciona</a>
+                <a href="projetos.html" class="py-3 border-b border-green-accent/20">Projetos</a>
+                <a href="https://wa.me/5514997464443?text=Ol%C3%A1%2C%20tenho%20interesse%20em%20desenvolver%20um%20site%20para%20o%20meu%20neg%C3%B3cio!" target="_blank" rel="noopener" class="mt-4 px-6 py-4 bg-green text-cream rounded-full text-center">
+                    Iniciar Projeto
+                </a>
+            </div>
+        </nav>
     </header>
 
     <main>
         <section class="pt-40 pb-16 px-6 lg:px-12 max-w-7xl mx-auto text-center">
             <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cream-100 border border-green-accent/40 text-sm font-medium mb-6">
-                <i class="ph ph-folder-open text-green-light"></i>
+                <i class="ph ph-folder-open text-green-light" aria-hidden="true"></i>
                 Meu Acervo
             </div>
             <h1 class="text-5xl lg:text-7xl font-bold font-heading mb-6 text-green">Todos os <span class="text-green-light">Projetos</span></h1>
@@ -94,109 +95,124 @@
 
         <section class="py-12 pb-32 bg-cream-100 rounded-t-[3rem] lg:rounded-t-[5rem]">
             <div class="max-w-7xl mx-auto px-6 lg:px-12 pt-16">
+                <!-- Grid de projetos (gerado automaticamente a partir de projetos.json) -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-                    
-                    <!-- Projeto 1: Gerlany Melo -->
+                    <!-- Projeto: Dra. Gerlany Melo -->
                     <a href="https://gerlanymelo.vercel.app/" target="_blank" rel="noopener noreferrer" class="group project-card block bg-cream rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-shadow duration-500 border border-green-accent/10">
                         <div class="relative w-full aspect-[16/10] overflow-hidden bg-green">
-                            <img src="site4.png" onerror="this.src='https://placehold.co/800x500/1A3626/FDFBF7?text=Dra.+Gerlany+Melo'" alt="Dra. Gerlany Melo" class="w-full h-full object-cover opacity-90 project-image transition-transform duration-700 ease-out">
+                            <img src="assets/img/projetos/gerlany-melo.webp" srcset="assets/img/projetos/gerlany-melo-640.webp 640w, assets/img/projetos/gerlany-melo.webp 1200w" sizes="(min-width: 1280px) 600px, (min-width: 768px) 50vw, 100vw" width="1200" height="750" loading="lazy" decoding="async" alt="Página inicial do site Dra. Gerlany Melo" class="w-full h-full object-cover object-top opacity-90 project-image transition-transform duration-700 ease-out">
                             <div class="absolute inset-0 bg-green/10 group-hover:bg-transparent transition-colors duration-500"></div>
-                            <div class="absolute top-4 left-4 flex gap-2">
+                            <div class="absolute top-4 left-4 flex flex-wrap gap-2">
                                 <span class="bg-cream/90 backdrop-blur text-green text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">Estética</span>
                                 <span class="bg-cream/90 backdrop-blur text-green text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">Website</span>
                             </div>
                             <div class="absolute inset-0 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 <div class="bg-cream text-green w-16 h-16 rounded-full flex items-center justify-center shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                    <i class="ph ph-arrow-up-right text-2xl"></i>
+                                    <i class="ph ph-arrow-up-right text-2xl" aria-hidden="true"></i>
                                 </div>
                             </div>
                         </div>
                         <div class="p-8">
                             <h3 class="text-2xl font-bold font-heading mb-3 text-green group-hover:text-green-light transition-colors">Dra. Gerlany Melo</h3>
-                            <p class="text-green/70 mb-6 line-clamp-2">
-                                Design sofisticado focado em transmitir segurança, beleza natural e conversão em agendamentos de tratamentos faciais.
-                            </p>
+                            <p class="text-green/70 mb-6 line-clamp-2">Design sofisticado focado em transmitir segurança, beleza natural e conversão em agendamentos de tratamentos faciais.</p>
                             <div class="flex items-center text-sm font-semibold text-green-light uppercase tracking-wider gap-2">
-                                Acessar site <i class="ph ph-arrow-right"></i>
+                                Acessar site <i class="ph ph-arrow-right" aria-hidden="true"></i>
                             </div>
                         </div>
                     </a>
 
-                    <!-- Projeto 2: Maira Justo -->
+                    <!-- Projeto: Maira Justo -->
                     <a href="https://mairajusto.vercel.app/" target="_blank" rel="noopener noreferrer" class="group project-card block bg-cream rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-shadow duration-500 border border-green-accent/10">
                         <div class="relative w-full aspect-[16/10] overflow-hidden bg-green">
-                            <img src="site6.png" onerror="this.src='https://placehold.co/800x500/1A3626/FDFBF7?text=Maira+Justo'" alt="Maira Justo" class="w-full h-full object-cover opacity-90 project-image transition-transform duration-700 ease-out">
+                            <img src="assets/img/projetos/maira-justo.webp" srcset="assets/img/projetos/maira-justo-640.webp 640w, assets/img/projetos/maira-justo.webp 1200w" sizes="(min-width: 1280px) 600px, (min-width: 768px) 50vw, 100vw" width="1200" height="750" loading="lazy" decoding="async" alt="Página inicial do site Maira Justo" class="w-full h-full object-cover object-top opacity-90 project-image transition-transform duration-700 ease-out">
                             <div class="absolute inset-0 bg-green/10 group-hover:bg-transparent transition-colors duration-500"></div>
-                            <div class="absolute top-4 left-4 flex gap-2">
-                                <span class="bg-cream/90 backdrop-blur text-green text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">Estética & Doula</span>
+                            <div class="absolute top-4 left-4 flex flex-wrap gap-2">
+                                <span class="bg-cream/90 backdrop-blur text-green text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">Estética &amp; Doula</span>
                             </div>
                             <div class="absolute inset-0 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 <div class="bg-cream text-green w-16 h-16 rounded-full flex items-center justify-center shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                    <i class="ph ph-arrow-up-right text-2xl"></i>
+                                    <i class="ph ph-arrow-up-right text-2xl" aria-hidden="true"></i>
                                 </div>
                             </div>
                         </div>
                         <div class="p-8">
                             <h3 class="text-2xl font-bold font-heading mb-3 text-green group-hover:text-green-light transition-colors">Maira Justo</h3>
-                            <p class="text-green/70 mb-6 line-clamp-2">
-                                Plataforma desenvolvida para transmitir acolhimento e profissionalismo, facilitando o agendamento de consultas e destacando serviços especializados.
-                            </p>
+                            <p class="text-green/70 mb-6 line-clamp-2">Plataforma desenvolvida para transmitir acolhimento e profissionalismo, facilitando o agendamento de consultas e destacando serviços especializados.</p>
                             <div class="flex items-center text-sm font-semibold text-green-light uppercase tracking-wider gap-2">
-                                Acessar site <i class="ph ph-arrow-right"></i>
+                                Acessar site <i class="ph ph-arrow-right" aria-hidden="true"></i>
                             </div>
                         </div>
                     </a>
 
-                    <!-- Projeto 3: Guilherme Chiarato -->
+                    <!-- Projeto: Guilherme Chiarato -->
                     <a href="https://guihermechiarato.vercel.app/" target="_blank" rel="noopener noreferrer" class="group project-card block bg-cream rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-shadow duration-500 border border-green-accent/10">
                         <div class="relative w-full aspect-[16/10] overflow-hidden bg-green">
-                            <img src="site8.png" onerror="this.src='https://placehold.co/800x500/1A3626/FDFBF7?text=Guilherme+Chiarato'" alt="Guilherme Chiarato" class="w-full h-full object-cover opacity-90 project-image transition-transform duration-700 ease-out">
+                            <img src="assets/img/projetos/guilherme-chiarato.webp" srcset="assets/img/projetos/guilherme-chiarato-640.webp 640w, assets/img/projetos/guilherme-chiarato.webp 1200w" sizes="(min-width: 1280px) 600px, (min-width: 768px) 50vw, 100vw" width="1200" height="750" loading="lazy" decoding="async" alt="Página inicial do site Guilherme Chiarato" class="w-full h-full object-cover object-top opacity-90 project-image transition-transform duration-700 ease-out">
                             <div class="absolute inset-0 bg-green/10 group-hover:bg-transparent transition-colors duration-500"></div>
-                            <div class="absolute top-4 left-4 flex gap-2">
+                            <div class="absolute top-4 left-4 flex flex-wrap gap-2">
                                 <span class="bg-cream/90 backdrop-blur text-green text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">Advocacia</span>
                             </div>
                             <div class="absolute inset-0 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 <div class="bg-cream text-green w-16 h-16 rounded-full flex items-center justify-center shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                    <i class="ph ph-arrow-up-right text-2xl"></i>
+                                    <i class="ph ph-arrow-up-right text-2xl" aria-hidden="true"></i>
                                 </div>
                             </div>
                         </div>
                         <div class="p-8">
                             <h3 class="text-2xl font-bold font-heading mb-3 text-green group-hover:text-green-light transition-colors">Guilherme Chiarato</h3>
-                            <p class="text-green/70 mb-6 line-clamp-2">
-                                Design focado em transmitir seriedade e transparência. Plataforma desenvolvida para destacar a atuação jurídica e captar clientes em meio digital.
-                            </p>
+                            <p class="text-green/70 mb-6 line-clamp-2">Design focado em transmitir seriedade e transparência. Plataforma desenvolvida para destacar a atuação jurídica e captar clientes em meio digital.</p>
                             <div class="flex items-center text-sm font-semibold text-green-light uppercase tracking-wider gap-2">
-                                Acessar site <i class="ph ph-arrow-right"></i>
+                                Acessar site <i class="ph ph-arrow-right" aria-hidden="true"></i>
                             </div>
                         </div>
                     </a>
 
-                    <!-- Projeto 4: Banda Untold -->
+                    <!-- Projeto: Banda Untold -->
                     <a href="https://www.bandauntold.com/" target="_blank" rel="noopener noreferrer" class="group project-card block bg-cream rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-shadow duration-500 border border-green-accent/10">
                         <div class="relative w-full aspect-[16/10] overflow-hidden bg-green">
-                            <img src="site1.png" onerror="this.src='https://placehold.co/800x500/1A3626/FDFBF7?text=Banda+Untold'" alt="Banda Untold" class="w-full h-full object-cover opacity-90 project-image transition-transform duration-700 ease-out">
+                            <img src="assets/img/projetos/banda-untold.webp" srcset="assets/img/projetos/banda-untold-640.webp 640w, assets/img/projetos/banda-untold.webp 1200w" sizes="(min-width: 1280px) 600px, (min-width: 768px) 50vw, 100vw" width="1200" height="750" loading="lazy" decoding="async" alt="Página inicial do site Banda Untold" class="w-full h-full object-cover object-top opacity-90 project-image transition-transform duration-700 ease-out">
                             <div class="absolute inset-0 bg-green/10 group-hover:bg-transparent transition-colors duration-500"></div>
-                            <div class="absolute top-4 left-4 flex gap-2">
+                            <div class="absolute top-4 left-4 flex flex-wrap gap-2">
                                 <span class="bg-cream/90 backdrop-blur text-green text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">Música</span>
                             </div>
                             <div class="absolute inset-0 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 <div class="bg-cream text-green w-16 h-16 rounded-full flex items-center justify-center shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                    <i class="ph ph-arrow-up-right text-2xl"></i>
+                                    <i class="ph ph-arrow-up-right text-2xl" aria-hidden="true"></i>
                                 </div>
                             </div>
                         </div>
                         <div class="p-8">
                             <h3 class="text-2xl font-bold font-heading mb-3 text-green group-hover:text-green-light transition-colors">Banda Untold</h3>
-                            <p class="text-green/70 mb-6 line-clamp-2">
-                                Presença digital imersiva que reflete a identidade musical da banda, reunindo galeria, agenda de shows e material para contratantes.
-                            </p>
+                            <p class="text-green/70 mb-6 line-clamp-2">Presença digital imersiva que reflete a identidade musical da banda, reunindo galeria, agenda de shows e material para contratantes.</p>
                             <div class="flex items-center text-sm font-semibold text-green-light uppercase tracking-wider gap-2">
-                                Acessar site <i class="ph ph-arrow-right"></i>
+                                Acessar site <i class="ph ph-arrow-right" aria-hidden="true"></i>
                             </div>
                         </div>
                     </a>
 
+                    <!-- Projeto: Capinzaiki Imobiliária -->
+                    <a href="https://www.capinzaiki.com.br/" target="_blank" rel="noopener noreferrer" class="group project-card block bg-cream rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-shadow duration-500 border border-green-accent/10">
+                        <div class="relative w-full aspect-[16/10] overflow-hidden bg-green">
+                            <img src="assets/img/projetos/capinzaiki-imobiliaria.webp" srcset="assets/img/projetos/capinzaiki-imobiliaria-640.webp 640w, assets/img/projetos/capinzaiki-imobiliaria.webp 1200w" sizes="(min-width: 1280px) 600px, (min-width: 768px) 50vw, 100vw" width="1200" height="750" loading="lazy" decoding="async" alt="Página inicial do site Capinzaiki Imobiliária" class="w-full h-full object-cover object-top opacity-90 project-image transition-transform duration-700 ease-out">
+                            <div class="absolute inset-0 bg-green/10 group-hover:bg-transparent transition-colors duration-500"></div>
+                            <div class="absolute top-4 left-4 flex flex-wrap gap-2">
+                                <span class="bg-cream/90 backdrop-blur text-green text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">Imobiliária</span>
+                                <span class="bg-cream/90 backdrop-blur text-green text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">Website</span>
+                            </div>
+                            <div class="absolute inset-0 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div class="bg-cream text-green w-16 h-16 rounded-full flex items-center justify-center shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                    <i class="ph ph-arrow-up-right text-2xl" aria-hidden="true"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-8">
+                            <h3 class="text-2xl font-bold font-heading mb-3 text-green group-hover:text-green-light transition-colors">Capinzaiki Imobiliária</h3>
+                            <p class="text-green/70 mb-6 line-clamp-2">Site imobiliário com busca de imóveis por tipo de negócio, valor e cidade, vitrine de imóveis e contato direto pelo WhatsApp.</p>
+                            <div class="flex items-center text-sm font-semibold text-green-light uppercase tracking-wider gap-2">
+                                Acessar site <i class="ph ph-arrow-right" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                    </a>
                 </div>
             </div>
         </section>
@@ -207,7 +223,7 @@
                 <p class="text-xl text-green-light font-medium mb-10">
                     O próximo site desta lista pode ser o seu. Vamos construir juntos a ferramenta que vai escalar o seu negócio.
                 </p>
-                <a href="https://wa.me/5514997464443?text=Ol%C3%A1%2C%20vi%20seu%20portf%C3%B3lio%20completo%20e%20gostaria%20de%20um%20or%C3%A7amento%21" target="_blank" class="inline-block px-10 py-5 bg-green text-cream rounded-full font-bold text-lg hover:bg-green-light hover:scale-105 transition-all shadow-xl shadow-green/20">
+                <a href="https://wa.me/5514997464443?text=Ol%C3%A1%2C%20vi%20seu%20portf%C3%B3lio%20completo%20e%20gostaria%20de%20um%20or%C3%A7amento!" target="_blank" rel="noopener" class="inline-block px-10 py-5 bg-green text-cream rounded-full font-bold text-lg hover:bg-green-light hover:scale-105 transition-all shadow-xl shadow-green/20">
                     Falar com Gabriel no WhatsApp
                 </a>
             </div>
@@ -218,12 +234,30 @@
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <p class="font-medium">© 2026 Gabriel Capinzaiki. Todos os direitos reservados.</p>
             <div class="flex gap-6 text-2xl">
-                <a href="https://www.instagram.com/gabrielqmc/" target="_blank" class="hover:text-cream transition-colors"><i class="ph ph-instagram-logo"></i></a>
-                <a href="https://www.linkedin.com/in/gabrielqueirozmc/" target="_blank" class="hover:text-cream transition-colors"><i class="ph ph-linkedin-logo"></i></a>
-                <a href="https://www.behance.net/gabrielqueirozm" target="_blank" class="hover:text-cream transition-colors"><i class="ph ph-behance-logo"></i></a>
+                <a href="https://www.instagram.com/gabrielqmc/" target="_blank" rel="noopener" class="hover:text-cream transition-colors" aria-label="Instagram"><i class="ph ph-instagram-logo" aria-hidden="true"></i></a>
+                <a href="https://www.linkedin.com/in/gabrielqueirozmc/" target="_blank" rel="noopener" class="hover:text-cream transition-colors" aria-label="LinkedIn"><i class="ph ph-linkedin-logo" aria-hidden="true"></i></a>
+                <a href="https://www.behance.net/gabrielqueirozm" target="_blank" rel="noopener" class="hover:text-cream transition-colors" aria-label="Behance"><i class="ph ph-behance-logo" aria-hidden="true"></i></a>
             </div>
         </div>
     </footer>
+
+    <script>
+        // Menu mobile: abre/fecha e fecha ao clicar em um link
+        (function () {
+            var botao = document.getElementById('menu-toggle');
+            var menu = document.getElementById('menu-mobile');
+            if (!botao || !menu) return;
+            function definir(aberto) {
+                menu.classList.toggle('hidden', !aberto);
+                botao.setAttribute('aria-expanded', aberto ? 'true' : 'false');
+                botao.setAttribute('aria-label', aberto ? 'Fechar menu' : 'Abrir menu');
+                botao.querySelector('i').className = 'ph ' + (aberto ? 'ph-x' : 'ph-list');
+            }
+            botao.addEventListener('click', function () { definir(menu.classList.contains('hidden')); });
+            menu.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { definir(false); }); });
+            document.addEventListener('keydown', function (e) { if (e.key === 'Escape') definir(false); });
+        })();
+    </script>
 
 </body>
 </html>

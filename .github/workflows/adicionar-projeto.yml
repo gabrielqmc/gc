@@ -1,0 +1,74 @@
+# Adiciona um site ao portfólio a partir de um formulário no GitHub:
+# aba "Actions" > "Adicionar projeto ao portfólio" > "Run workflow".
+# O robô tira o print do site, gera as páginas e publica tudo sozinho.
+name: Adicionar projeto ao portfólio
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "Link do site (ex.: https://meucliente.com.br)"
+        required: true
+        type: string
+      nome:
+        description: "Nome do projeto (vazio = usa o título do site)"
+        required: false
+        type: string
+      descricao:
+        description: "Descrição curta (vazio = usa a descrição do site)"
+        required: false
+        type: string
+      tags:
+        description: "Etiquetas separadas por vírgula (ex.: Estética, Website)"
+        required: false
+        type: string
+      destaque:
+        description: "Mostrar na página inicial?"
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: portfolio
+  cancel-in-progress: false
+
+jobs:
+  adicionar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependências
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Adicionar projeto e tirar o print
+        env:
+          URL: ${{ inputs.url }}
+          NOME: ${{ inputs.nome }}
+          DESCRICAO: ${{ inputs.descricao }}
+          TAGS: ${{ inputs.tags }}
+          DESTAQUE: ${{ inputs.destaque && 'sim' || 'nao' }}
+        run: |
+          node scripts/adicionar.mjs --url "$URL" --nome "$NOME" --descricao "$DESCRICAO" --tags "$TAGS" --destaque "$DESTAQUE"
+          node scripts/capturar.mjs
+          node scripts/build.mjs
+
+      - name: Publicar
+        env:
+          URL: ${{ inputs.url }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Adiciona projeto ao portfólio: $URL"
+          git push

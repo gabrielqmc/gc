@@ -1,0 +1,20 @@
+{
+  "name": "portfolio-gabriel-capinzaiki",
+  "version": "1.0.0",
+  "description": "Portfólio de Gabriel Capinzaiki (Web Designer)",
+  "scripts": {
+    "gerar": "node scripts/build.mjs",
+    "capturar": "node scripts/capturar.mjs",
+    "adicionar": "node scripts/adicionar.mjs",
+    "novo": "node scripts/adicionar.mjs",
+    "prints:todos": "node scripts/capturar.mjs --todos"
+  },
+  "author": "Gabriel Capinzaiki",
+  "devDependencies": {
+    "playwright": "1.63.0",
+    "sharp": "0.33.5",
+    "tailwindcss": "3.4.17"
+  },
+  "private": true,
+  "type": "module"
+}
