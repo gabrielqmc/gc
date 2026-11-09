@@ -452,7 +452,8 @@ html.dark .theme-btn .lua-sombra { cx: 17px; cy: 7px; }
 .process__sub { max-width: 22em; }
 .process__track { display: flex; gap: var(--gap); width: max-content; will-change: transform; }
 .step { position: relative; width: clamp(300px, 38vw, 640px); flex: none; padding: clamp(20px, 2vw, 32px); border: 1px solid var(--line); min-height: clamp(340px, 52vh, 560px); display: flex; flex-direction: column; justify-content: space-between; background: var(--bg); }
-.step__num { font-size: clamp(120px, 16vw, 280px); line-height: 0.75; letter-spacing: -0.07em; font-weight: 300; color: transparent; -webkit-text-stroke: 1px var(--fg); }
+.step__num { font-size: clamp(120px, 16vw, 280px); line-height: 0.75; letter-spacing: -0.07em; font-weight: 300; color: color-mix(in srgb, var(--fg) 13%, transparent); transition: color 0.6s var(--ease-out); }
+.step:hover .step__num { color: color-mix(in srgb, var(--fg) 30%, transparent); }
 .step__title { font-size: clamp(30px, 3.2vw, 56px); letter-spacing: -0.045em; line-height: 1; font-weight: 500; margin-bottom: 12px; }
 .step__desc { max-width: 24em; color: var(--mute); font-size: clamp(15px, 1.1vw, 18px); }
 .process__bar { margin-top: clamp(28px, 4vh, 48px); display: flex; align-items: center; gap: 16px; }

@@ -932,10 +932,12 @@
       }`;
     const FS = `
       precision highp float;
-      uniform sampler2D uTex; uniform sampler2D uMask;
+      #define N_GOTAS 28
+      uniform sampler2D uTex;
       uniform vec2 uRes; uniform vec2 uPlane; uniform vec2 uImg;
-      uniform float uTime; uniform float uVel; uniform float uPar; uniform float uEnter; uniform float uColor;
+      uniform float uTime; uniform float uVel; uniform float uPar; uniform float uEnter; uniform float uColor; uniform float uDpr;
       uniform vec3 uDark; uniform vec3 uLight; uniform vec3 uRim;
+      uniform vec3 uGotas[N_GOTAS];   // x, y (px da tela) e raio de cada gota do rastro
       varying vec2 vUv;
       float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
       float noise(vec2 p) {
@@ -952,18 +954,30 @@
         uv.y += (1.0 - s.y) * clamp(0.5 + uPar * 0.5, 0.0, 1.0);
 
         float v = clamp(uVel, -1.0, 1.0);
-        vec3 c = texture2D(uTex, uv).rgb * 0.4
-               + texture2D(uTex, uv + vec2(0.0, v * 0.018)).rgb * 0.3
-               + texture2D(uTex, uv - vec2(0.0, v * 0.018)).rgb * 0.3;
+        // Desfoque vertical contínuo conforme a velocidade da rolagem (5 amostras)
+        vec2 o = vec2(0.0, v * 0.012);
+        vec3 c = texture2D(uTex, uv).rgb * 0.3
+               + texture2D(uTex, uv + o * 0.5).rgb * 0.2 + texture2D(uTex, uv - o * 0.5).rgb * 0.2
+               + texture2D(uTex, uv + o).rgb * 0.15 + texture2D(uTex, uv - o).rgb * 0.15;
 
         float lum = dot(c, vec3(0.299, 0.587, 0.114));
         vec3 duo = mix(uDark, uLight, smoothstep(0.04, 0.96, lum));
 
-        vec2 sp = vec2(gl_FragCoord.x / uRes.x, 1.0 - gl_FragCoord.y / uRes.y);
-        float n = noise(sp * vec2(9.0, 6.0) + uTime * 0.5);
-        float m = texture2D(uMask, sp + (n - 0.5) * 0.035).r;
-        float reveal = smoothstep(0.3, 0.42, m);
-        float rim = smoothstep(0.16, 0.28, m) * (1.0 - smoothstep(0.3, 0.4, m));
+        // Rastro líquido: soma de “metaballs” calculada por pixel (borda lisa,
+        // sem serrilhado). Uma ondulação de baixa frequência deixa a forma orgânica.
+        vec2 px = vec2(gl_FragCoord.x, uRes.y - gl_FragCoord.y) / uDpr;
+        vec2 q = px + (vec2(noise(px * 0.005 + uTime * 0.35), noise(px * 0.005 - uTime * 0.3 + 7.1)) - 0.5) * 22.0;
+        float f = 0.0;
+        for (int i = 0; i < N_GOTAS; i++) {
+          vec3 g = uGotas[i];
+          if (g.z > 0.5) {
+            vec2 dd = q - g.xy;
+            float k = (g.z * g.z) / (dot(dd, dd) + 1.0);
+            f += k * k;
+          }
+        }
+        float reveal = smoothstep(0.9, 1.1, f);
+        float rim = smoothstep(0.66, 0.76, f) * (1.0 - smoothstep(0.9, 1.02, f));
 
         vec3 col = mix(duo, c, max(reveal, uColor));
         col = mix(col, uRim, rim * 0.9 * (1.0 - uColor));
@@ -999,14 +1013,12 @@
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
     const U = {};
-    ['uView', 'uRect', 'uBend', 'uEnter', 'uTex', 'uMask', 'uRes', 'uPlane', 'uImg', 'uTime', 'uVel', 'uPar', 'uColor', 'uDark', 'uLight', 'uRim']
+    ['uView', 'uRect', 'uBend', 'uEnter', 'uTex', 'uRes', 'uPlane', 'uImg', 'uTime', 'uVel', 'uPar', 'uColor', 'uDpr', 'uDark', 'uLight', 'uRim']
       .forEach((n) => { U[n] = gl.getUniformLocation(prog, n); });
+    U.uGotas = gl.getUniformLocation(prog, 'uGotas[0]');
     const rgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
-    gl.uniform3fv(U.uDark, rgb('#14211a'));
-    gl.uniform3fv(U.uLight, rgb('#eeede9'));
     gl.uniform3fv(U.uRim, rgb('#a3b899'));
     gl.uniform1i(U.uTex, 0);
-    gl.uniform1i(U.uMask, 1);
 
     const novaTextura = () => {
       const t = gl.createTexture();
@@ -1018,46 +1030,40 @@
       return t;
     };
 
-    // Máscara do rastro (canvas 2D em 1/4 da resolução)
-    const mascara = d.createElement('canvas');
-    const mctx = mascara.getContext('2d');
-    const texMascara = novaTextura();
-    const ESC = 0.25;
     let dpr = 1; let VW = 0; let VH = 0;
     const redimensionar = () => {
       dpr = Math.min(w.devicePixelRatio || 1, 2);
       VW = w.innerWidth; VH = w.innerHeight;
       canvas.width = Math.round(VW * dpr); canvas.height = Math.round(VH * dpr);
       gl.viewport(0, 0, canvas.width, canvas.height);
-      mascara.width = Math.ceil(VW * ESC); mascara.height = Math.ceil(VH * ESC);
     };
     redimensionar();
     w.addEventListener('resize', redimensionar);
 
-    // Pontos do rastro (mouse e toque)
-    let ultimo = null;
-    let pintadoEm = 0;
-    const pintar = (x, y) => {
-      const p = { x: x * ESC, y: y * ESC };
-      const de = ultimo || p;
-      const vel = Math.hypot(p.x - de.x, p.y - de.y);
-      mctx.lineCap = 'round';
-      mctx.lineJoin = 'round';
-      mctx.strokeStyle = '#fff';
-      mctx.shadowColor = '#fff';
-      mctx.shadowBlur = 10;
-      mctx.lineWidth = clamp(10 + vel * 0.9, 10, 30);
-      mctx.beginPath();
-      mctx.moveTo(de.x, de.y);
-      mctx.lineTo(p.x + 0.01, p.y);
-      mctx.stroke();
-      ultimo = p;
-      pintadoEm = performance.now();
+    // Gotas do rastro (mouse e toque): cada uma nasce no cursor e encolhe
+    // suavemente até sumir. Gotas próximas se fundem como líquido.
+    const N_GOTAS = 28;
+    const VIDA = 1100;              // ms até a gota sumir por completo
+    const gotas = [];               // { x, y, r, t }
+    const dadosGotas = new Float32Array(N_GOTAS * 3);
+    let ultimaGota = null;
+    const pingar = (x, y) => {
+      const agora = performance.now();
+      let velGota = 0;
+      if (ultimaGota) {
+        const dist = Math.hypot(x - ultimaGota.x, y - ultimaGota.y);
+        if (dist < 9 && agora - ultimaGota.t < 40) return;
+        velGota = (dist / Math.max(16, agora - ultimaGota.t)) * 16;
+      }
+      const g = { x, y, r: clamp(34 + velGota * 1.4, 34, 74), t: agora };
+      gotas.push(g);
+      if (gotas.length > N_GOTAS) gotas.shift();
+      ultimaGota = g;
     };
-    w.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') pintar(e.clientX, e.clientY); }, { passive: true });
-    w.addEventListener('touchmove', (e) => { const t = e.touches[0]; if (t) pintar(t.clientX, t.clientY); }, { passive: true });
-    w.addEventListener('touchend', () => { ultimo = null; }, { passive: true });
-    d.documentElement.addEventListener('pointerleave', () => { ultimo = null; });
+    w.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') pingar(e.clientX, e.clientY); }, { passive: true });
+    w.addEventListener('touchmove', (e) => { const t = e.touches[0]; if (t) pingar(t.clientX, t.clientY); }, { passive: true });
+    w.addEventListener('touchend', () => { ultimaGota = null; }, { passive: true });
+    d.documentElement.addEventListener('pointerleave', () => { ultimaGota = null; });
 
     // Planos: um por imagem
     const planos = imgs.map((img) => ({ img, caixa: img.closest('[data-gl-media]') || img, tex: null, w: 1, h: 1, entrada: 0, entrou: false }));
@@ -1080,8 +1086,6 @@
     });
 
     let tempo = 0;
-    let ultimoQuadro = 0;
-    let mascaraLimpa = true;
     let ultimoScroll = w.scrollY;
     let vel = 0;
     gsap.ticker.add(() => {
@@ -1093,29 +1097,21 @@
       vel = lerp(vel, bruto, 0.12);
       const curva = clamp(Math.abs(vel) * 0.0075, 0, 0.3);
 
-      // O rastro vai sumindo: meia-vida de ~180 ms (independente da taxa de quadros),
-      // e a máscara é zerada de vez pouco depois de o cursor parar, para não sobrar resto.
+      // Raio atual de cada gota: cresce rápido ao nascer e depois encolhe devagar
+      // (curva suave), até zerar no fim da vida.
       const agora = performance.now();
-      const dt = Math.min(64, agora - (ultimoQuadro || agora));
-      ultimoQuadro = agora;
-      const parado = agora - pintadoEm;
-      const ativo = parado < 1600;
-      if (ativo || !mascaraLimpa) {
-        if (ativo) {
-          mctx.globalCompositeOperation = 'destination-out';
-          mctx.fillStyle = `rgba(0,0,0,${(1 - Math.pow(0.5, dt / 180)).toFixed(3)})`;
-          mctx.fillRect(0, 0, mascara.width, mascara.height);
-          mctx.globalCompositeOperation = 'source-over';
-          mascaraLimpa = false;
-        } else {
-          mctx.clearRect(0, 0, mascara.width, mascara.height);
-          mascaraLimpa = true;
-        }
-        gl.activeTexture(gl.TEXTURE1);
-        gl.bindTexture(gl.TEXTURE_2D, texMascara);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, mascara);
-        gl.activeTexture(gl.TEXTURE0);
-      }
+      while (gotas.length && agora - gotas[0].t > VIDA) gotas.shift();
+      dadosGotas.fill(0);
+      gotas.forEach((g, i) => {
+        const u = (agora - g.t) / VIDA;
+        const nascer = Math.min(1, 0.45 + (agora - g.t) / 160);
+        const encolher = 0.5 * (1 + Math.cos(Math.PI * Math.min(1, u)));
+        dadosGotas[i * 3] = g.x;
+        dadosGotas[i * 3 + 1] = g.y;
+        dadosGotas[i * 3 + 2] = g.r * nascer * encolher;
+      });
+      gl.uniform3fv(U.uGotas, dadosGotas);
+      gl.uniform1f(U.uDpr, dpr);
 
       // Duotom acompanha a paleta da seção (claro = fundo; escuro = texto puxado para o verde)
       const cores = coresDoTema();
@@ -1151,9 +1147,6 @@
         const alvoCor = fine ? 0 : 1 - clamp((Math.abs(centro - 0.5) - 0.12) / 0.25, 0, 1);
         p.cor = lerp(p.cor || 0, alvoCor, 0.08);
         gl.uniform1f(U.uColor, p.cor);
-        gl.activeTexture(gl.TEXTURE1);
-        gl.bindTexture(gl.TEXTURE_2D, texMascara);
-        gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, p.tex);
         gl.drawElements(gl.TRIANGLES, idx.length, gl.UNSIGNED_SHORT, 0);
       }
