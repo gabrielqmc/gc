@@ -5,6 +5,7 @@
 //   node scripts/capturar.mjs --projeto "Maira Justo"   -> refaz print e vídeo desse (nome, slug ou link)
 //   node scripts/capturar.mjs --todos         -> refaz print e vídeo de todos os projetos
 //   node scripts/capturar.mjs --videos        -> só os vídeos que faltam (não mexe nos prints)
+//   node scripts/capturar.mjs --todos --videos -> regrava os vídeos de todos (não mexe nos prints)
 //
 // Print: WebP em 1200, 640 e 1920 px.
 // Vídeo: ~10 s, a página rola devagar até um pouco abaixo da primeira dobra e volta
@@ -137,30 +138,29 @@ async function gravarVideo(pagina, destino) {
     quadros.push({ data: f.data, t: f.metadata.timestamp });
     cdp.send('Page.screencastFrameAck', { sessionId: f.sessionId }).catch(() => {});
   });
-  await pagina.evaluate(() => window.scrollTo(0, 0));
-  await pagina.waitForTimeout(400);
+  await pagina.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await pagina.mouse.move(VIEWPORT.width / 2, VIEWPORT.height / 2);
+  await pagina.waitForTimeout(600);
+  const alvo = await pagina.evaluate(() => Math.max(0, Math.min(
+    document.documentElement.scrollHeight - window.innerHeight,
+    window.innerHeight * 1.6,
+  )));
   await cdp.send('Page.startScreencast', { format: 'jpeg', quality: 90, maxWidth: 1440, maxHeight: 900, everyNthFrame: 1 });
 
-  // Roteiro: pausa no topo, desce ~1,6 tela com aceleração suave, pausa, volta ao topo.
-  await pagina.evaluate(async () => {
-    const espera = (ms) => new Promise((r) => setTimeout(r, ms));
-    const suave = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-    const rolar = (de, ate, ms) => new Promise((res) => {
-      const inicio = performance.now();
-      const passo = (agora) => {
-        const u = Math.min(1, (agora - inicio) / ms);
-        window.scrollTo(0, de + (ate - de) * suave(u));
-        if (u < 1) requestAnimationFrame(passo); else res();
-      };
-      requestAnimationFrame(passo);
-    });
-    const alvo = Math.max(0, Math.min(document.documentElement.scrollHeight - window.innerHeight, window.innerHeight * 1.6));
-    await espera(1200);
-    await rolar(0, alvo, 3600);
-    await espera(1000);
-    await rolar(alvo, 0, 2800);
-    await espera(900);
-  });
+  // Roteiro: pausa no topo, desce ~1,6 tela, pausa, volta ao topo.
+  // A rolagem é feita com a roda do mouse, em pequenos passos contínuos (acelera e
+  // desacelera), como uma pessoa rolando: assim sites com rolagem suave própria
+  // (Lenis, scroll-behavior: smooth etc.) se movem do jeito que se movem para um visitante.
+  await pagina.waitForTimeout(1200);
+  await rolarComRoda(pagina, alvo, 3800);
+  await pagina.waitForTimeout(1300);
+  await rolarComRoda(pagina, -alvo, 3200);
+  await pagina.waitForTimeout(1200);
+  // Garante que termina exatamente no topo (o loop do vídeo fica contínuo)
+  if (await pagina.evaluate(() => window.scrollY > 2)) {
+    await rolarComRoda(pagina, -(await pagina.evaluate(() => window.scrollY)) - 40, 500);
+    await pagina.waitForTimeout(700);
+  }
   await cdp.send('Page.stopScreencast');
   await cdp.detach().catch(() => {});
 
@@ -188,6 +188,48 @@ async function gravarVideo(pagina, destino) {
     destino,
   ]);
   fs.rmSync(pastaQuadros, { recursive: true, force: true });
+}
+
+/**
+ * Rola `distancia` px ao longo de `ms`, seguindo uma curva suave (acelera e
+ * desacelera), com um pequeno passo a cada quadro, dentro da própria página:
+ * - cada passo é enviado como um evento de roda do mouse; se o site usa uma
+ *   biblioteca de rolagem suave (Lenis, Locomotive...), ela trata o evento e
+ *   anima do jeito dela, como faria com um visitante;
+ * - se ninguém tratar o evento, a página é rolada diretamente.
+ * A rolagem suave do CSS (scroll-behavior: smooth) é desligada só durante a
+ * gravação, porque ela transforma cada passo numa animação própria e faz a
+ * página “pular”.
+ */
+async function rolarComRoda(pagina, distancia, ms) {
+  await pagina.evaluate(async ([dist, duracao]) => {
+    if (!document.getElementById('__sem-rolagem-suave')) {
+      const st = document.createElement('style');
+      st.id = '__sem-rolagem-suave';
+      st.textContent = 'html, body { scroll-behavior: auto !important; }';
+      document.head.appendChild(st);
+    }
+    const suave = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+    await new Promise((resolve) => {
+      const inicio = performance.now();
+      let enviado = 0;
+      const quadro = (agora) => {
+        const u = Math.min(1, (agora - inicio) / duracao);
+        const passo = dist * suave(u) - enviado;
+        enviado += passo;
+        if (passo) {
+          const x = window.innerWidth / 2;
+          const y = window.innerHeight / 2;
+          const alvo = document.elementFromPoint(x, y) || document.body;
+          const evento = new WheelEvent('wheel', { deltaY: passo, deltaMode: 0, clientX: x, clientY: y, bubbles: true, cancelable: true });
+          const ninguemTratou = alvo.dispatchEvent(evento);
+          if (ninguemTratou) window.scrollBy(0, passo);
+        }
+        if (u < 1) requestAnimationFrame(quadro); else resolve();
+      };
+      requestAnimationFrame(quadro);
+    });
+  }, [distancia, ms]);
 }
 
 async function abrir(pagina, url) {
