@@ -1,0 +1,34 @@
+    <header class="fixed w-full top-0 z-50 bg-cream/90 backdrop-blur-md border-b border-green-accent/30 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 py-5 flex justify-between items-center">
+            <a href="{{inicio}}" class="font-heading font-bold text-xl tracking-tight text-green relative group" aria-label="Gabriel Capinzaiki - início">
+                GC<span class="text-green-accent">.</span>
+                <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green transition-all group-hover:w-full"></span>
+            </a>
+
+            <nav class="hidden md:flex items-center gap-8 font-medium text-sm tracking-wide" aria-label="Menu principal">
+                <a href="{{base}}#servicos" class="hover:text-green-light transition-colors">Serviços</a>
+                <a href="{{base}}#processo" class="hover:text-green-light transition-colors">Como funciona</a>
+                <a href="projetos.html" class="hover:text-green-light transition-colors">Projetos</a>
+                <a href="{{whatsapp}}" target="_blank" rel="noopener" class="px-5 py-2.5 bg-green text-cream rounded-full hover:bg-green-light transition-colors duration-300 shadow-lg shadow-green/20">
+                    Iniciar Projeto
+                </a>
+            </nav>
+
+            <!-- Botão do menu mobile -->
+            <button id="menu-toggle" type="button" class="md:hidden text-green text-2xl w-11 h-11 -mr-2 flex items-center justify-center rounded-full hover:bg-green/5" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu-mobile">
+                <i class="ph ph-list" aria-hidden="true"></i>
+            </button>
+        </div>
+
+        <!-- Menu mobile -->
+        <nav id="menu-mobile" class="md:hidden hidden border-t border-green-accent/30 bg-cream" aria-label="Menu mobile">
+            <div class="px-6 py-6 flex flex-col gap-1 font-medium text-lg">
+                <a href="{{base}}#servicos" class="py-3 border-b border-green-accent/20">Serviços</a>
+                <a href="{{base}}#processo" class="py-3 border-b border-green-accent/20">Como funciona</a>
+                <a href="projetos.html" class="py-3 border-b border-green-accent/20">Projetos</a>
+                <a href="{{whatsapp}}" target="_blank" rel="noopener" class="mt-4 px-6 py-4 bg-green text-cream rounded-full text-center">
+                    Iniciar Projeto
+                </a>
+            </div>
+        </nav>
+    </header>

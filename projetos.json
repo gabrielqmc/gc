@@ -1,0 +1,53 @@
+{
+  "site": {
+    "url": "",
+    "whatsapp": "5514997464443",
+    "mensagemWhatsapp": "Olá, tenho interesse em desenvolver um site para o meu negócio!",
+    "mensagemWhatsappPortfolio": "Olá, vi seu portfólio completo e gostaria de um orçamento!",
+    "maxDestaques": 4
+  },
+  "projetos": [
+    {
+      "slug": "gerlany-melo",
+      "nome": "Dra. Gerlany Melo",
+      "url": "https://gerlanymelo.vercel.app/",
+      "descricao": "Design sofisticado focado em transmitir segurança, beleza natural e conversão em agendamentos de tratamentos faciais.",
+      "tags": ["Estética", "Website"],
+      "destaque": true,
+      "imagem": "assets/img/projetos/gerlany-melo.webp"
+    },
+    {
+      "slug": "maira-justo",
+      "nome": "Maira Justo",
+      "url": "https://mairajusto.vercel.app/",
+      "descricao": "Plataforma desenvolvida para transmitir acolhimento e profissionalismo, facilitando o agendamento de consultas e destacando serviços especializados.",
+      "tags": ["Estética & Doula"],
+      "destaque": true,
+      "imagem": "assets/img/projetos/maira-justo.webp"
+    },
+    {
+      "slug": "guilherme-chiarato",
+      "nome": "Guilherme Chiarato",
+      "url": "https://guihermechiarato.vercel.app/",
+      "descricao": "Design focado em transmitir seriedade e transparência. Plataforma desenvolvida para destacar a atuação jurídica e captar clientes em meio digital.",
+      "tags": ["Advocacia"],
+      "destaque": false,
+      "imagem": "assets/img/projetos/guilherme-chiarato.webp"
+    },
+    {
+      "slug": "banda-untold",
+      "nome": "Banda Untold",
+      "url": "https://www.bandauntold.com/",
+      "descricao": "Presença digital imersiva que reflete a identidade musical da banda, reunindo galeria, agenda de shows e material para contratantes.",
+      "tags": ["Música"],
+      "destaque": false,
+      "imagem": "assets/img/projetos/banda-untold.webp"
+    }
+  ],
+  "galeria": [
+    {
+      "imagem": "assets/img/galeria/capinzaiki-imoveis.webp",
+      "alt": "Site da imobiliária Capinzaiki"
+    }
+  ]
+}

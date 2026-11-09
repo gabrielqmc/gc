@@ -1,0 +1,28 @@
+    <footer class="bg-green border-t border-green-light text-cream/80 py-8 px-6 lg:px-12">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="font-medium">© {{ano}} Gabriel Capinzaiki. Todos os direitos reservados.</p>
+            <div class="flex gap-6 text-2xl">
+                <a href="https://www.instagram.com/gabrielqmc/" target="_blank" rel="noopener" class="hover:text-cream transition-colors" aria-label="Instagram"><i class="ph ph-instagram-logo" aria-hidden="true"></i></a>
+                <a href="https://www.linkedin.com/in/gabrielqueirozmc/" target="_blank" rel="noopener" class="hover:text-cream transition-colors" aria-label="LinkedIn"><i class="ph ph-linkedin-logo" aria-hidden="true"></i></a>
+                <a href="https://www.behance.net/gabrielqueirozm" target="_blank" rel="noopener" class="hover:text-cream transition-colors" aria-label="Behance"><i class="ph ph-behance-logo" aria-hidden="true"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Menu mobile: abre/fecha e fecha ao clicar em um link
+        (function () {
+            var botao = document.getElementById('menu-toggle');
+            var menu = document.getElementById('menu-mobile');
+            if (!botao || !menu) return;
+            function definir(aberto) {
+                menu.classList.toggle('hidden', !aberto);
+                botao.setAttribute('aria-expanded', aberto ? 'true' : 'false');
+                botao.setAttribute('aria-label', aberto ? 'Fechar menu' : 'Abrir menu');
+                botao.querySelector('i').className = 'ph ' + (aberto ? 'ph-x' : 'ph-list');
+            }
+            botao.addEventListener('click', function () { definir(menu.classList.contains('hidden')); });
+            menu.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { definir(false); }); });
+            document.addEventListener('keydown', function (e) { if (e.key === 'Escape') definir(false); });
+        })();
+    </script>

@@ -1,0 +1,41 @@
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{titulo}}</title>
+
+    <!-- SEO Básico -->
+    <meta name="description" content="{{descricao}}">
+    <meta name="author" content="Gabriel Capinzaiki">
+    <meta name="robots" content="index, follow">
+    {{canonical}}
+
+    <!-- Open Graph / Redes Sociais (WhatsApp, Facebook, LinkedIn) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ogTitulo}}">
+    <meta property="og:description" content="{{ogDescricao}}">
+    <meta property="og:image" content="{{ogImagem}}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Gabriel Capinzaiki - Web Designer Portfolio">
+    <meta property="og:site_name" content="Gabriel Capinzaiki">
+    <meta property="og:locale" content="pt_BR">
+    {{ogUrl}}
+
+    <!-- Twitter Card (Twitter / X) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ogTitulo}}">
+    <meta name="twitter:description" content="{{ogDescricao}}">
+    <meta name="twitter:image" content="{{ogImagem}}">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FDFBF7'/><text x='50' y='72' font-family='sans-serif' font-weight='bold' font-size='55' text-anchor='middle' fill='%231A3626'>GC<tspan fill='%23A3B899'>.</tspan></text></svg>">
+
+    <!-- Fontes: Space Grotesk (títulos) e Outfit (textos) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Ícones (Phosphor, versão fixa, só o peso "regular") -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css">
+
+    <!-- CSS gerado pelo Tailwind (npm run build) -->
+    <link rel="stylesheet" href="assets/css/style.css?v={{versaoCss}}">
