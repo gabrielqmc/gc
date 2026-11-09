@@ -14,12 +14,12 @@ on:
   workflow_dispatch:
     inputs:
       refazer_prints:
-        description: "Refazer o print de TODOS os projetos?"
+        description: "Refazer print e vídeo de TODOS os projetos?"
         required: false
         type: boolean
         default: false
       projeto:
-        description: "Ou refazer o print de UM projeto (nome, slug ou link)"
+        description: "Ou refazer print e vídeo de UM projeto (nome, slug ou link)"
         required: false
         type: string
 
@@ -45,6 +45,8 @@ jobs:
         run: |
           npm ci
           npx playwright install --with-deps chromium
+          # ffmpeg monta os vídeos de prévia dos sites
+          command -v ffmpeg >/dev/null || (sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg)
 
       - name: Tirar prints
         env:

@@ -50,6 +50,8 @@ jobs:
         run: |
           npm ci
           npx playwright install --with-deps chromium
+          # ffmpeg monta os vídeos de prévia dos sites
+          command -v ffmpeg >/dev/null || (sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg)
 
       - name: Adicionar projeto e tirar o print
         env:

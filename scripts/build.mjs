@@ -129,7 +129,9 @@ projetos.forEach((p, i) => {
       pTags: esc((p.tags || []).join(', ') || '—'),
       pNum: dois(i + 1),
       pCapa: imagem(p, '../', { cls: 'cover-img', sizes: '100vw', lazy: false, alt: `Página inicial do site ${p.nome}` }),
-      pImagemBrowser: imagem(p, '../', { sizes: '(min-width: 1240px) 1180px, 92vw', alt: `Site ${p.nome} em um navegador` }),
+      pImagemBrowser: existe(p.video)
+        ? `<video src="../${p.video}" poster="../${p.imagem}" muted loop playsinline preload="none" data-autoplay width="1280" height="800" aria-label="Vídeo do site ${esc(p.nome)} em uso"></video>`
+        : imagem(p, '../', { sizes: '(min-width: 1240px) 1180px, 92vw', alt: `Site ${p.nome} em um navegador` }),
       proxUrl: `${prox.slug}.html`,
       proxNome: esc(prox.nome),
       proxNum: dois(((i + 1) % total) + 1),
@@ -211,7 +213,7 @@ function imagem(p, raiz, { cls = '', sizes = '100vw', lazy = true, alt } = {}) {
 function feedItem(p, raiz, i) {
   return `                    <li>
                         <a href="${raiz}${paginaProjeto(p)}" class="feed__item" data-feed-item data-zoom data-transition="${esc(p.nome)}" data-cursor-label="Ver projeto">
-                            <div class="feed__media" data-gl-media>${imagem(p, raiz, { sizes: '(min-width: 861px) 50vw, 100vw' }).replace('<img ', '<img data-gl ')}</div>
+                            <div class="feed__media" data-gl-media${atribVideo(p, raiz)}>${imagem(p, raiz, { sizes: '(min-width: 861px) 50vw, 100vw' }).replace('<img ', '<img data-gl ')}</div>
                             <div class="feed__cap"><span class="mono muted tabular">${dois(i + 1)}</span><strong>${esc(p.nome)}</strong><p>${esc(p.descricao)}</p></div>
                         </a>
                     </li>`;
@@ -220,7 +222,7 @@ function feedItem(p, raiz, i) {
 /** Peça do arquivo (página de todos os projetos). */
 function arch(p, raiz, i) {
   return `                <a href="${raiz}${paginaProjeto(p)}" class="arch" data-work data-zoom data-tags="${esc((p.tags || []).join('|'))}" data-transition="${esc(p.nome)}" data-cursor-label="Ver projeto">
-                    <div class="gl-media" data-gl-media>${imagem(p, raiz, { sizes: '(min-width: 861px) 58vw, 100vw' }).replace('<img ', '<img data-gl ')}</div>
+                    <div class="gl-media" data-gl-media${atribVideo(p, raiz)}>${imagem(p, raiz, { sizes: '(min-width: 861px) 58vw, 100vw' }).replace('<img ', '<img data-gl ')}</div>
                     <div class="arch__cap">
                         <span class="mono muted tabular">${dois(i + 1)}</span>
                         <span class="arch__name"><span class="roll">${esc(p.nome)}</span></span>
@@ -228,4 +230,9 @@ function arch(p, raiz, i) {
                         <p class="arch__desc">${esc(p.descricao)}</p>
                     </div>
                 </a>`;
+}
+
+/** Atributo com o vídeo de prévia do projeto (quando existir). */
+function atribVideo(p, raiz) {
+  return existe(p.video) ? ` data-video="${raiz}${p.video}"` : '';
 }
