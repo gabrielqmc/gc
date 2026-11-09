@@ -583,3 +583,12 @@ html.dark .theme-btn .lua-sombra { cx: 17px; cy: 7px; }
 .feed__more { display: flex; flex-direction: column; gap: 14px; padding: clamp(28px, 3vw, 48px) 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .feed__more-title { font-size: clamp(30px, 3.6vw, 64px); line-height: 1; letter-spacing: -0.045em; font-weight: 450; display: inline-flex; gap: 0.25em; align-items: baseline; }
 .feed__more-title .arrow { width: 0.6em; height: 0.6em; }
+
+/* Telas de toque: imagens dos projetos sem WebGL (ver imagensToque() no main.js) */
+.sem-gl [data-gl-media] img {
+  filter: grayscale(1) contrast(1.06) brightness(0.98);
+  transform: scale(1.04);
+  transition: filter 0.9s var(--ease-out);
+  will-change: transform;
+}
+.sem-gl [data-gl-media].is-cor img { filter: none; }
