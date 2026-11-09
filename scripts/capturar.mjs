@@ -202,23 +202,26 @@ async function gravarTela(pagina, cdp, destino) {
 
   if (quadros.length < 2) throw new Error('nenhum quadro gravado para o vídeo');
 
-  // Lista do ffmpeg com a duração de cada quadro, já acelerada de volta (x LENTIDAO)
-  const linhas = [];
-  quadros.forEach((q, i) => {
-    const arquivo = path.join(pastaQuadros, `q${String(i).padStart(5, '0')}.jpg`);
-    fs.writeFileSync(arquivo, Buffer.from(q.data, 'base64'));
-    const dur = i < quadros.length - 1 ? Math.max(0.001, (quadros[i + 1].t - q.t) * LENTIDAO) : 0.4;
-    linhas.push(`file '${arquivo}'`, `duration ${dur.toFixed(4)}`);
-  });
-  linhas.push(`file '${path.join(pastaQuadros, `q${String(quadros.length - 1).padStart(5, '0')}.jpg`)}'`);
-  const lista = path.join(pastaQuadros, 'lista.txt');
-  fs.writeFileSync(lista, linhas.join('\n'));
+  // Monta a sequência final a 30 quadros/s: para cada instante do vídeo (já
+  // acelerado de volta, x LENTIDAO), usa o quadro capturado mais recente. Fazer
+  // isso aqui evita a conversão de ritmo do ffmpeg, que repetia 1 quadro a cada 6.
+  const FPS = 30;
+  const t0 = quadros[0].t;
+  const tempoVideo = (q) => (q.t - t0) * LENTIDAO;
+  const duracao = tempoVideo(quadros[quadros.length - 1]) + 0.3;
+  const total = Math.round(duracao * FPS);
+  let j = 0;
+  for (let n = 0; n < total; n++) {
+    const t = n / FPS;
+    while (j + 1 < quadros.length && tempoVideo(quadros[j + 1]) <= t) j++;
+    fs.writeFileSync(path.join(pastaQuadros, `v${String(n).padStart(5, '0')}.jpg`), Buffer.from(quadros[j].data, 'base64'));
+  }
 
   fs.mkdirSync(path.dirname(destino), { recursive: true });
   execFileSync('ffmpeg', [
     '-y', '-loglevel', 'error',
-    '-f', 'concat', '-safe', '0', '-i', lista,
-    '-vf', 'fps=30,scale=1280:-2:flags=lanczos,format=yuv420p',
+    '-framerate', String(FPS), '-i', path.join(pastaQuadros, 'v%05d.jpg'),
+    '-vf', 'scale=1280:-2:flags=lanczos,format=yuv420p',
     '-c:v', 'libx264', '-preset', 'slow', '-crf', '26', '-profile:v', 'high',
     '-movflags', '+faststart', '-an',
     destino,
