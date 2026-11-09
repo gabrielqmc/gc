@@ -25,10 +25,10 @@ import { RAIZ, PASTA_PRINTS, lerDados, salvarDados, lerArgs, existe, caminhoVari
 const LARGURAS = [1200, 640, 1920]; // a primeira é a imagem principal; as outras são variantes (-640, -1920)
 const VIEWPORT = { width: 1440, height: 900 }; // 16:10, mesma proporção dos cards
 const PASTA_VIDEOS = 'assets/video/projetos';
-// Câmera lenta da gravação: o relógio da página anda a 40% da velocidade e o vídeo
-// é acelerado 2,5x na montagem. Assim, mesmo numa máquina sem placa de vídeo, há
+// Câmera lenta da gravação: o relógio da página anda a 25% da velocidade e o vídeo
+// é acelerado 4x na montagem. Assim, mesmo numa máquina sem placa de vídeo, há
 // quadros de sobra e o resultado fica fluido, na velocidade real do site.
-const LENTIDAO = 0.4;
+const LENTIDAO = 0.25;
 
 const temFfmpeg = (() => { try { execFileSync('ffmpeg', ['-version'], { stdio: 'ignore' }); return true; } catch { return false; } })();
 if (!temFfmpeg) console.warn('⚠️  ffmpeg não encontrado: os vídeos de prévia não serão gravados.');
