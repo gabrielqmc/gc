@@ -9,7 +9,13 @@
 {{> header}}
 
     <main>
-        <section class="proj-hero wrap" data-section="Projeto">
+        <div class="proj-top" data-section="Projeto">
+            <div class="proj-cover" data-cover>
+                {{pCapa}}
+            </div>
+        </div>
+
+        <section class="proj-hero wrap">
             <div class="proj-hero__meta mono">
                 <a href="{{raiz}}projetos.html" data-transition="Projetos" class="muted"><span class="roll">← Todos os projetos</span></a>
                 <span class="tabular" data-reveal="fade">Projeto {{pNum}} / {{totalProjetos2}}</span>
@@ -22,12 +28,6 @@
                 </div>
             </div>
         </section>
-
-        <div class="proj-cover" data-section="Capa">
-            <div class="proj-cover__media" data-cover>
-                {{pCapa}}
-            </div>
-        </div>
 
         <section class="proj-info wrap" data-section="Sobre">
             <ul class="proj-info__list" data-reveal="up">
@@ -52,7 +52,7 @@
             </div>
         </div>
 
-        <a href="{{proxUrl}}" class="next wrap" data-transition="{{proxNome}}" data-cursor-label="Próximo" data-section="Próximo">
+        <a href="{{proxUrl}}" class="next wrap" data-transition="{{proxNome}}" data-zoom data-cursor-label="Próximo" data-section="Próximo">
             <div class="next__label mono muted"><span>Próximo projeto</span><span class="tabular">{{proxNum}} / {{totalProjetos2}}</span></div>
             <span class="next__name">{{proxNome}}</span>
             <div class="next__img">{{proxImagem}}</div>

@@ -48,8 +48,6 @@ const versaoJs = hash(JS_PRINCIPAL);
 const projetos = dados.projetos || [];
 const total = projetos.length;
 const dois = (n) => String(n).padStart(2, '0');
-const destaques = (projetos.filter((p) => p.destaque).length ? projetos.filter((p) => p.destaque) : projetos)
-  .slice(0, site.maxDestaques || 4);
 const linkWhats = (msg) => `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(msg || '')}`;
 const ano = new Date().getFullYear();
 const paginaProjeto = (p) => `${PASTA_TRABALHOS}/${p.slug}.html`;
@@ -75,8 +73,9 @@ saidas.push({
     ogDescricao: 'Seu negócio precisa de mais do que um site bonito. Crio plataformas digitais rápidas e focadas em conversão para destacar sua marca e atrair clientes na internet.',
     inicio: '#inicio',
     home: '',
-    vitrine: destaques.map((p) => work(p, '', projetos.indexOf(p))).join('\n'),
-    indice: projetos.map((p, i) => row(p, '', i)).join('\n'),
+    feedItens: projetos.map((p, i) => feedItem(p, '', i)).join('\n'),
+    feedNomes: projetos.map((p) => `                            <span>${esc(p.nome)}</span>`).join('\n'),
+    feedMeta: projetos.map((p, i) => `                            <div${i === 0 ? ' class="is-active"' : ''} data-meta-url="${paginaProjeto(p)}" data-meta-nome="${esc(p.nome)}"><span class="mono muted">${esc((p.tags || []).join(' · '))}</span><p>${esc(p.descricao)}</p></div>`).join('\n'),
   },
 });
 
@@ -97,7 +96,7 @@ saidas.push({
       ...[...contagemTags].map(([t, n]) =>
         `                <button type="button" class="filter" data-filter="${esc(t)}" aria-pressed="false">${esc(t)}<sup>${dois(n)}</sup></button>`),
     ].join('\n'),
-    galeriaTodos: projetos.map((p, i) => work(p, '', i)).join('\n'),
+    arquivo: projetos.map((p, i) => arch(p, '', i)).join('\n'),
   },
 });
 
@@ -198,32 +197,25 @@ function imagem(p, raiz, { cls = '', sizes = '100vw', lazy = true, alt } = {}) {
   return `<img src="${raiz}${p.imagem}" srcset="${srcset}" sizes="${sizes}" width="1200" height="750"${lazy ? ' loading="lazy"' : ' fetchpriority="high"'} decoding="async" alt="${esc(alt ?? `Página inicial do site ${p.nome}`)}"${cls ? ` class="${cls}"` : ''}>`;
 }
 
-/** Peça da vitrine (imagem grande + legenda). */
-function work(p, raiz, i) {
-  const tags = (p.tags || []).join(' · ');
-  return `                <a href="${raiz}${paginaProjeto(p)}" class="work" data-work data-tags="${esc((p.tags || []).join('|'))}" data-transition="${esc(p.nome)}" data-cursor-label="Ver projeto">
-                    <div class="work__media" data-tilt>
-                        <div class="work__frame">${imagem(p, raiz, { sizes: '(min-width: 860px) 60vw, 100vw' }).replace('<img ', '<img data-parallax ')}</div>
-                    </div>
-                    <div class="work__cap">
-                        <span class="work__num mono muted tabular">${dois(i + 1)}</span>
-                        <span class="work__name">${esc(p.nome)}</span>
-                        <span class="work__tags mono muted">${esc(tags)}</span>
-                        <p class="work__desc">${esc(p.descricao)}</p>
-                    </div>
-                </a>`;
-}
-
-/** Linha do índice (lista) — no desktop a prévia aparece em WebGL ao passar o mouse. */
-function row(p, raiz, i) {
-  const previa = existe(caminhoVariante(p.imagem, 640)) ? caminhoVariante(p.imagem, 640) : p.imagem;
-  return `                    <li class="row">
-                        <a href="${raiz}${paginaProjeto(p)}" class="row__link" data-row data-preview="${raiz}${previa || ''}" data-transition="${esc(p.nome)}" data-cursor-label="Abrir">
-                            <span class="row__thumb">${imagem(p, raiz, { sizes: '100vw', alt: '' })}</span>
-                            <span class="row__num mono muted tabular">${dois(i + 1)}</span>
-                            <span class="row__name" aria-label="${esc(p.nome)}"><span class="a">${esc(p.nome)}</span><span class="b" aria-hidden="true">${esc(p.nome)}</span></span>
-                            <span class="row__tags mono muted">${esc((p.tags || []).join(' · '))}</span>
-                            <span class="row__go">${SETA}</span>
+/** Item da coluna de trabalhos (imagem desenhada em WebGL por cima do <img>). */
+function feedItem(p, raiz, i) {
+  return `                    <li>
+                        <a href="${raiz}${paginaProjeto(p)}" class="feed__item" data-feed-item data-zoom data-transition="${esc(p.nome)}" data-cursor-label="Ver projeto">
+                            <div class="feed__media" data-gl-media>${imagem(p, raiz, { sizes: '(min-width: 861px) 50vw, 100vw' }).replace('<img ', '<img data-gl ')}</div>
+                            <div class="feed__cap"><span class="mono muted tabular">${dois(i + 1)}</span><strong>${esc(p.nome)}</strong><p>${esc(p.descricao)}</p></div>
                         </a>
                     </li>`;
+}
+
+/** Peça do arquivo (página de todos os projetos). */
+function arch(p, raiz, i) {
+  return `                <a href="${raiz}${paginaProjeto(p)}" class="arch" data-work data-zoom data-tags="${esc((p.tags || []).join('|'))}" data-transition="${esc(p.nome)}" data-cursor-label="Ver projeto">
+                    <div class="gl-media" data-gl-media>${imagem(p, raiz, { sizes: '(min-width: 861px) 58vw, 100vw' }).replace('<img ', '<img data-gl ')}</div>
+                    <div class="arch__cap">
+                        <span class="mono muted tabular">${dois(i + 1)}</span>
+                        <span class="arch__name"><span class="roll">${esc(p.nome)}</span></span>
+                        <span class="mono muted">${esc((p.tags || []).join(' · '))}</span>
+                        <p class="arch__desc">${esc(p.descricao)}</p>
+                    </div>
+                </a>`;
 }

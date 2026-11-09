@@ -10,7 +10,7 @@ Os projetos ficam em **`projetos.json`**. As páginas `index.html` e `projetos.h
 3. Cole o **link do site**. Nome, descrição e etiquetas são opcionais: se ficarem vazios, o nome e a descrição são lidos do próprio site.
 4. Clique em **Run workflow**. Em cerca de 2 minutos o robô:
    - abre o site e tira um print (1440×900, em WebP otimizado);
-   - adiciona o card em `projetos.html` (e na página inicial, se "destaque" estiver marcado) e no carrossel do topo;
+   - cria a página do projeto (`trabalhos/<slug>.html`) e coloca o projeto na coluna de trabalhos da página inicial e em `projetos.html`;
    - faz o commit, e a hospedagem publica a nova versão.
 
 ## 🗑️ Remover um site do portfólio
@@ -44,7 +44,7 @@ Edite o `projetos.json` (dá para fazer direto pelo GitHub, no ícone de lápis)
 ```
 
 - **Ordem**: os cards aparecem na ordem da lista (os novos entram no topo).
-- **`destaque: true`**: aparece na página inicial (no máximo `site.maxDestaques`).
+- **`destaque`**: não é mais usado (a página inicial mostra todos os projetos na ordem da lista).
 - **`site.url`**: domínio do site (ex.: `https://gabrielcapinzaiki.com.br`). Ele é necessário para a prévia no WhatsApp e no LinkedIn e para gerar `sitemap.xml` e `robots.txt`.
 
 Ao salvar, o workflow **"Atualizar site"** gera as páginas novamente sozinho.

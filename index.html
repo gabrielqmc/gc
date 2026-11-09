@@ -39,7 +39,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="assets/css/style.css?v=86568a45">
+    <link rel="stylesheet" href="assets/css/style.css?v=d47fa59b">
 
     <script>
         // Marca que o JS está ativo (os estados iniciais das animações dependem disso).
@@ -68,8 +68,9 @@
         <div class="loader__bar" data-loader-bar></div>
     </div>
 
-    <!-- Cortina de transição entre páginas -->
+    <!-- Cortina de transição entre páginas (borda curva em SVG) -->
     <div class="transicao" data-transicao aria-hidden="true">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none"><path data-transicao-path d="M0 100 L0 100 Q50 100 100 100 L100 100 Z"/></svg>
         <div class="transicao__label serif"><span data-transicao-label></span></div>
     </div>
 
@@ -172,97 +173,77 @@
         </section>
 
         <!-- ===================== TRABALHOS ===================== -->
-        <section id="trabalhos" class="section wrap" data-section="Obras">
-            <div class="section-head">
-                <div class="section-head__label mono muted"><span>(02)</span><span>Trabalhos selecionados</span></div>
-                <h2 class="section-head__title" data-split="words">Obras Digitais<sup>(05)</sup></h2>
-                <p class="section-head__text" data-reveal="up">
-                    Uma seleção dos meus projetos mais recentes. Cada site é construído do zero pensando na identidade única do cliente e nos resultados que ele deseja alcançar.
-                </p>
-            </div>
+        <section id="trabalhos" class="wrap" data-section="Obras">
+            <div class="feed">
+                <aside class="feed__aside">
+                    <div>
+                        <div class="mono muted" style="display:flex;gap:12px"><span>(02)</span><span>Trabalhos selecionados</span></div>
+                        <h2 class="feed__title" data-split="words">Obras Digitais<sup>(05)</sup></h2>
+                        <p class="feed__intro" data-reveal="up">
+                            Uma seleção dos meus projetos mais recentes. Cada site é construído do zero pensando na identidade única do cliente e nos resultados que ele deseja alcançar.
+                        </p>
+                    </div>
 
-            <div class="showcase">
-                <a href="trabalhos/gerlany-melo.html" class="work" data-work data-tags="Estética|Website" data-transition="Dra. Gerlany Melo" data-cursor-label="Ver projeto">
-                    <div class="work__media" data-tilt>
-                        <div class="work__frame"><img data-parallax src="assets/img/projetos/gerlany-melo.webp" srcset="assets/img/projetos/gerlany-melo-640.webp 640w, assets/img/projetos/gerlany-melo.webp 1200w, assets/img/projetos/gerlany-melo-1920.webp 1920w" sizes="(min-width: 860px) 60vw, 100vw" width="1200" height="750" loading="lazy" decoding="async" alt="Página inicial do site Dra. Gerlany Melo"></div>
+                    <div class="feed__now" data-feed-now>
+                        <div class="feed__count mono">
+                            <span class="tabular" data-feed-num>01</span>
+                            <span class="feed__count-bar"><i data-feed-bar></i></span>
+                            <span class="tabular muted">05</span>
+                        </div>
+                        <div class="feed__names" aria-hidden="true"><div class="feed__names-track" data-feed-names>
+                            <span>Dra. Gerlany Melo</span>
+                            <span>Maira Justo</span>
+                            <span>Guilherme Chiarato</span>
+                            <span>Banda Untold</span>
+                            <span>Capinzaiki Imobiliária</span>
+                        </div></div>
+                        <div class="feed__meta" data-feed-meta>
+                            <div class="is-active" data-meta-url="trabalhos/gerlany-melo.html" data-meta-nome="Dra. Gerlany Melo"><span class="mono muted">Estética · Website</span><p>Design sofisticado focado em transmitir segurança, beleza natural e conversão em agendamentos de tratamentos faciais.</p></div>
+                            <div data-meta-url="trabalhos/maira-justo.html" data-meta-nome="Maira Justo"><span class="mono muted">Estética &amp; Doula</span><p>Plataforma desenvolvida para transmitir acolhimento e profissionalismo, facilitando o agendamento de consultas e destacando serviços especializados.</p></div>
+                            <div data-meta-url="trabalhos/guilherme-chiarato.html" data-meta-nome="Guilherme Chiarato"><span class="mono muted">Advocacia</span><p>Design focado em transmitir seriedade e transparência. Plataforma desenvolvida para destacar a atuação jurídica e captar clientes em meio digital.</p></div>
+                            <div data-meta-url="trabalhos/banda-untold.html" data-meta-nome="Banda Untold"><span class="mono muted">Música</span><p>Presença digital imersiva que reflete a identidade musical da banda, reunindo galeria, agenda de shows e material para contratantes.</p></div>
+                            <div data-meta-url="trabalhos/capinzaiki-imobiliaria.html" data-meta-nome="Capinzaiki Imobiliária"><span class="mono muted">Imobiliária · Website</span><p>Site do gestor imobiliário Felix Capinzaiki, com imóveis à venda, locação e lançamentos em Jaú e região, e contato direto pelo WhatsApp.</p></div>
+                        </div>
+                        <div class="feed__links">
+                            <a href="#" data-feed-link class="btn btn--solid magnetic"><span class="magnetic-in"><span class="roll">Ver projeto</span><span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17 17 7M8 7h9v9"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17 17 7M8 7h9v9"/></svg></span></span></a>
+                            <a href="projetos.html" data-transition="Projetos"><span class="roll">Todos os 5 projetos</span></a>
+                        </div>
                     </div>
-                    <div class="work__cap">
-                        <span class="work__num mono muted tabular">01</span>
-                        <span class="work__name">Dra. Gerlany Melo</span>
-                        <span class="work__tags mono muted">Estética · Website</span>
-                        <p class="work__desc">Design sofisticado focado em transmitir segurança, beleza natural e conversão em agendamentos de tratamentos faciais.</p>
-                    </div>
-                </a>
-                <a href="trabalhos/maira-justo.html" class="work" data-work data-tags="Estética &amp; Doula" data-transition="Maira Justo" data-cursor-label="Ver projeto">
-                    <div class="work__media" data-tilt>
-                        <div class="work__frame"><img data-parallax src="assets/img/projetos/maira-justo.webp" srcset="assets/img/projetos/maira-justo-640.webp 640w, assets/img/projetos/maira-justo.webp 1200w, assets/img/projetos/maira-justo-1920.webp 1920w" sizes="(min-width: 860px) 60vw, 100vw" width="1200" height="750" loading="lazy" decoding="async" alt="Página inicial do site Maira Justo"></div>
-                    </div>
-                    <div class="work__cap">
-                        <span class="work__num mono muted tabular">02</span>
-                        <span class="work__name">Maira Justo</span>
-                        <span class="work__tags mono muted">Estética &amp; Doula</span>
-                        <p class="work__desc">Plataforma desenvolvida para transmitir acolhimento e profissionalismo, facilitando o agendamento de consultas e destacando serviços especializados.</p>
-                    </div>
-                </a>
-            </div>
+                </aside>
 
-            <div style="margin-top: clamp(110px, 14vw, 220px)">
-                <div class="index-head mono">
-                    <span>Nº</span><span>Índice</span><span>Segmento</span><span></span>
-                </div>
-                <ol class="index-list" data-index-list>
-                    <li class="row">
-                        <a href="trabalhos/gerlany-melo.html" class="row__link" data-row data-preview="assets/img/projetos/gerlany-melo-640.webp" data-transition="Dra. Gerlany Melo" data-cursor-label="Abrir">
-                            <span class="row__thumb"><img src="assets/img/projetos/gerlany-melo.webp" srcset="assets/img/projetos/gerlany-melo-640.webp 640w, assets/img/projetos/gerlany-melo.webp 1200w, assets/img/projetos/gerlany-melo-1920.webp 1920w" sizes="100vw" width="1200" height="750" loading="lazy" decoding="async" alt=""></span>
-                            <span class="row__num mono muted tabular">01</span>
-                            <span class="row__name" aria-label="Dra. Gerlany Melo"><span class="a">Dra. Gerlany Melo</span><span class="b" aria-hidden="true">Dra. Gerlany Melo</span></span>
-                            <span class="row__tags mono muted">Estética · Website</span>
-                            <span class="row__go"><span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17 17 7M8 7h9v9"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17 17 7M8 7h9v9"/></svg></span></span>
+                <ol class="feed__list" data-feed>
+                    <li>
+                        <a href="trabalhos/gerlany-melo.html" class="feed__item" data-feed-item data-zoom data-transition="Dra. Gerlany Melo" data-cursor-label="Ver projeto">
+                            <div class="feed__media" data-gl-media><img data-gl src="assets/img/projetos/gerlany-melo.webp" srcset="assets/img/projetos/gerlany-melo-640.webp 640w, assets/img/projetos/gerlany-melo.webp 1200w, assets/img/projetos/gerlany-melo-1920.webp 1920w" sizes="(min-width: 861px) 50vw, 100vw" width="1200" height="750" loading="lazy" decoding="async" alt="Página inicial do site Dra. Gerlany Melo"></div>
+                            <div class="feed__cap"><span class="mono muted tabular">01</span><strong>Dra. Gerlany Melo</strong><p>Design sofisticado focado em transmitir segurança, beleza natural e conversão em agendamentos de tratamentos faciais.</p></div>
                         </a>
                     </li>
-                    <li class="row">
-                        <a href="trabalhos/maira-justo.html" class="row__link" data-row data-preview="assets/img/projetos/maira-justo-640.webp" data-transition="Maira Justo" data-cursor-label="Abrir">
-                            <span class="row__thumb"><img src="assets/img/projetos/maira-justo.webp" srcset="assets/img/projetos/maira-justo-640.webp 640w, assets/img/projetos/maira-justo.webp 1200w, assets/img/projetos/maira-justo-1920.webp 1920w" sizes="100vw" width="1200" height="750" loading="lazy" decoding="async" alt=""></span>
-                            <span class="row__num mono muted tabular">02</span>
-                            <span class="row__name" aria-label="Maira Justo"><span class="a">Maira Justo</span><span class="b" aria-hidden="true">Maira Justo</span></span>
-                            <span class="row__tags mono muted">Estética &amp; Doula</span>
-                            <span class="row__go"><span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17 17 7M8 7h9v9"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17 17 7M8 7h9v9"/></svg></span></span>
+                    <li>
+                        <a href="trabalhos/maira-justo.html" class="feed__item" data-feed-item data-zoom data-transition="Maira Justo" data-cursor-label="Ver projeto">
+                            <div class="feed__media" data-gl-media><img data-gl src="assets/img/projetos/maira-justo.webp" srcset="assets/img/projetos/maira-justo-640.webp 640w, assets/img/projetos/maira-justo.webp 1200w, assets/img/projetos/maira-justo-1920.webp 1920w" sizes="(min-width: 861px) 50vw, 100vw" width="1200" height="750" loading="lazy" decoding="async" alt="Página inicial do site Maira Justo"></div>
+                            <div class="feed__cap"><span class="mono muted tabular">02</span><strong>Maira Justo</strong><p>Plataforma desenvolvida para transmitir acolhimento e profissionalismo, facilitando o agendamento de consultas e destacando serviços especializados.</p></div>
                         </a>
                     </li>
-                    <li class="row">
-                        <a href="trabalhos/guilherme-chiarato.html" class="row__link" data-row data-preview="assets/img/projetos/guilherme-chiarato-640.webp" data-transition="Guilherme Chiarato" data-cursor-label="Abrir">
-                            <span class="row__thumb"><img src="assets/img/projetos/guilherme-chiarato.webp" srcset="assets/img/projetos/guilherme-chiarato-640.webp 640w, assets/img/projetos/guilherme-chiarato.webp 1200w, assets/img/projetos/guilherme-chiarato-1920.webp 1920w" sizes="100vw" width="1200" height="750" loading="lazy" decoding="async" alt=""></span>
-                            <span class="row__num mono muted tabular">03</span>
-                            <span class="row__name" aria-label="Guilherme Chiarato"><span class="a">Guilherme Chiarato</span><span class="b" aria-hidden="true">Guilherme Chiarato</span></span>
-                            <span class="row__tags mono muted">Advocacia</span>
-                            <span class="row__go"><span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17 17 7M8 7h9v9"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17 17 7M8 7h9v9"/></svg></span></span>
+                    <li>
+                        <a href="trabalhos/guilherme-chiarato.html" class="feed__item" data-feed-item data-zoom data-transition="Guilherme Chiarato" data-cursor-label="Ver projeto">
+                            <div class="feed__media" data-gl-media><img data-gl src="assets/img/projetos/guilherme-chiarato.webp" srcset="assets/img/projetos/guilherme-chiarato-640.webp 640w, assets/img/projetos/guilherme-chiarato.webp 1200w, assets/img/projetos/guilherme-chiarato-1920.webp 1920w" sizes="(min-width: 861px) 50vw, 100vw" width="1200" height="750" loading="lazy" decoding="async" alt="Página inicial do site Guilherme Chiarato"></div>
+                            <div class="feed__cap"><span class="mono muted tabular">03</span><strong>Guilherme Chiarato</strong><p>Design focado em transmitir seriedade e transparência. Plataforma desenvolvida para destacar a atuação jurídica e captar clientes em meio digital.</p></div>
                         </a>
                     </li>
-                    <li class="row">
-                        <a href="trabalhos/banda-untold.html" class="row__link" data-row data-preview="assets/img/projetos/banda-untold-640.webp" data-transition="Banda Untold" data-cursor-label="Abrir">
-                            <span class="row__thumb"><img src="assets/img/projetos/banda-untold.webp" srcset="assets/img/projetos/banda-untold-640.webp 640w, assets/img/projetos/banda-untold.webp 1200w, assets/img/projetos/banda-untold-1920.webp 1920w" sizes="100vw" width="1200" height="750" loading="lazy" decoding="async" alt=""></span>
-                            <span class="row__num mono muted tabular">04</span>
-                            <span class="row__name" aria-label="Banda Untold"><span class="a">Banda Untold</span><span class="b" aria-hidden="true">Banda Untold</span></span>
-                            <span class="row__tags mono muted">Música</span>
-                            <span class="row__go"><span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17 17 7M8 7h9v9"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17 17 7M8 7h9v9"/></svg></span></span>
+                    <li>
+                        <a href="trabalhos/banda-untold.html" class="feed__item" data-feed-item data-zoom data-transition="Banda Untold" data-cursor-label="Ver projeto">
+                            <div class="feed__media" data-gl-media><img data-gl src="assets/img/projetos/banda-untold.webp" srcset="assets/img/projetos/banda-untold-640.webp 640w, assets/img/projetos/banda-untold.webp 1200w, assets/img/projetos/banda-untold-1920.webp 1920w" sizes="(min-width: 861px) 50vw, 100vw" width="1200" height="750" loading="lazy" decoding="async" alt="Página inicial do site Banda Untold"></div>
+                            <div class="feed__cap"><span class="mono muted tabular">04</span><strong>Banda Untold</strong><p>Presença digital imersiva que reflete a identidade musical da banda, reunindo galeria, agenda de shows e material para contratantes.</p></div>
                         </a>
                     </li>
-                    <li class="row">
-                        <a href="trabalhos/capinzaiki-imobiliaria.html" class="row__link" data-row data-preview="assets/img/projetos/capinzaiki-imobiliaria-640.webp" data-transition="Capinzaiki Imobiliária" data-cursor-label="Abrir">
-                            <span class="row__thumb"><img src="assets/img/projetos/capinzaiki-imobiliaria.webp" srcset="assets/img/projetos/capinzaiki-imobiliaria-640.webp 640w, assets/img/projetos/capinzaiki-imobiliaria.webp 1200w" sizes="100vw" width="1200" height="750" loading="lazy" decoding="async" alt=""></span>
-                            <span class="row__num mono muted tabular">05</span>
-                            <span class="row__name" aria-label="Capinzaiki Imobiliária"><span class="a">Capinzaiki Imobiliária</span><span class="b" aria-hidden="true">Capinzaiki Imobiliária</span></span>
-                            <span class="row__tags mono muted">Imobiliária · Website</span>
-                            <span class="row__go"><span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17 17 7M8 7h9v9"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17 17 7M8 7h9v9"/></svg></span></span>
+                    <li>
+                        <a href="trabalhos/capinzaiki-imobiliaria.html" class="feed__item" data-feed-item data-zoom data-transition="Capinzaiki Imobiliária" data-cursor-label="Ver projeto">
+                            <div class="feed__media" data-gl-media><img data-gl src="assets/img/projetos/capinzaiki-imobiliaria.webp" srcset="assets/img/projetos/capinzaiki-imobiliaria-640.webp 640w, assets/img/projetos/capinzaiki-imobiliaria.webp 1200w" sizes="(min-width: 861px) 50vw, 100vw" width="1200" height="750" loading="lazy" decoding="async" alt="Página inicial do site Capinzaiki Imobiliária"></div>
+                            <div class="feed__cap"><span class="mono muted tabular">05</span><strong>Capinzaiki Imobiliária</strong><p>Site do gestor imobiliário Felix Capinzaiki, com imóveis à venda, locação e lançamentos em Jaú e região, e contato direto pelo WhatsApp.</p></div>
                         </a>
                     </li>
                 </ol>
             </div>
-
-            <a href="projetos.html" class="more-link" data-transition="Projetos" data-cursor-label="Abrir">
-                <span>Ver todos os <span class="serif">5</span> projetos</span>
-                <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17 17 7M8 7h9v9"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
-            </a>
         </section>
 
         <!-- ===================== SERVIÇOS ===================== -->
@@ -379,12 +360,10 @@
         <div class="footer__mark" aria-hidden="true" data-footer-mark>Capinzaiki</div>
     </footer>
 
-    <canvas class="preview-gl" data-preview-gl aria-hidden="true"></canvas>
-
     <script src="assets/js/vendor/gsap.min.js?v=3.13.0" defer></script>
     <script src="assets/js/vendor/ScrollTrigger.min.js?v=3.13.0" defer></script>
     <script src="assets/js/vendor/lenis.min.js?v=1.3.19" defer></script>
-    <script src="assets/js/main.js?v=13fa7bcd" defer></script>
+    <script src="assets/js/main.js?v=86543995" defer></script>
 
 </body>
 </html>

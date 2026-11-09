@@ -51,32 +51,40 @@
         </section>
 
         <!-- ===================== TRABALHOS ===================== -->
-        <section id="trabalhos" class="section wrap" data-section="Obras">
-            <div class="section-head">
-                <div class="section-head__label mono muted"><span>(02)</span><span>Trabalhos selecionados</span></div>
-                <h2 class="section-head__title" data-split="words">Obras Digitais<sup>({{totalProjetos2}})</sup></h2>
-                <p class="section-head__text" data-reveal="up">
-                    Uma seleção dos meus projetos mais recentes. Cada site é construído do zero pensando na identidade única do cliente e nos resultados que ele deseja alcançar.
-                </p>
-            </div>
+        <section id="trabalhos" class="wrap" data-section="Obras">
+            <div class="feed">
+                <aside class="feed__aside">
+                    <div>
+                        <div class="mono muted" style="display:flex;gap:12px"><span>(02)</span><span>Trabalhos selecionados</span></div>
+                        <h2 class="feed__title" data-split="words">Obras Digitais<sup>({{totalProjetos2}})</sup></h2>
+                        <p class="feed__intro" data-reveal="up">
+                            Uma seleção dos meus projetos mais recentes. Cada site é construído do zero pensando na identidade única do cliente e nos resultados que ele deseja alcançar.
+                        </p>
+                    </div>
 
-            <div class="showcase">
-{{vitrine}}
-            </div>
+                    <div class="feed__now" data-feed-now>
+                        <div class="feed__count mono">
+                            <span class="tabular" data-feed-num>01</span>
+                            <span class="feed__count-bar"><i data-feed-bar></i></span>
+                            <span class="tabular muted">{{totalProjetos2}}</span>
+                        </div>
+                        <div class="feed__names" aria-hidden="true"><div class="feed__names-track" data-feed-names>
+{{feedNomes}}
+                        </div></div>
+                        <div class="feed__meta" data-feed-meta>
+{{feedMeta}}
+                        </div>
+                        <div class="feed__links">
+                            <a href="#" data-feed-link class="btn btn--solid magnetic"><span class="magnetic-in"><span class="roll">Ver projeto</span>{{seta}}</span></a>
+                            <a href="projetos.html" data-transition="Projetos"><span class="roll">Todos os {{totalProjetos}} projetos</span></a>
+                        </div>
+                    </div>
+                </aside>
 
-            <div style="margin-top: clamp(110px, 14vw, 220px)">
-                <div class="index-head mono">
-                    <span>Nº</span><span>Índice</span><span>Segmento</span><span></span>
-                </div>
-                <ol class="index-list" data-index-list>
-{{indice}}
+                <ol class="feed__list" data-feed>
+{{feedItens}}
                 </ol>
             </div>
-
-            <a href="projetos.html" class="more-link" data-transition="Projetos" data-cursor-label="Abrir">
-                <span>Ver todos os <span class="serif">{{totalProjetos}}</span> projetos</span>
-                {{seta}}
-            </a>
         </section>
 
         <!-- ===================== SERVIÇOS ===================== -->

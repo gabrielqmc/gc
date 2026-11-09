@@ -144,34 +144,121 @@
   /* ------------------------------------------------------------------------
      Transições entre páginas
      ------------------------------------------------------------------------ */
+  // 1) Cortina com borda curva (SVG) para a navegação geral
+  // 2) Zoom da imagem do projeto: a imagem clicada cresce até a tela inteira e
+  //    “pousa” como capa na página do projeto
   const cortina = $('[data-transicao]');
+  const cortinaPath = $('[data-transicao-path]');
   const cortinaLabel = $('[data-transicao-label]');
-  const veioDeTransicao = store.get('gc-transicao') !== null;
+  const chegadaCortina = store.get('gc-transicao');
+  const chegadaZoom = store.get('gc-zoom');
+  const veioDeTransicao = chegadaCortina !== null || chegadaZoom !== null;
+  if ('scrollRestoration' in history && veioDeTransicao) history.scrollRestoration = 'manual';
+  const camadasDaPagina = () => $$('main, .site-header, .section-indicator, .gl-stage, footer');
 
-  function sairDaCortina() {
-    store.set('gc-visto', '1');
-    const loaderEl = $('[data-loader]');
-    if (loaderEl) loaderEl.classList.add('is-done');
-    if (!cortina) return Promise.resolve();
-    const label = store.get('gc-transicao') || '';
-    store.del('gc-transicao');
-    cortinaLabel.textContent = label;
-    cortina.classList.add('is-covering');
+  // Forma da cortina: y = altura da borda (0–100), c = curvatura da borda
+  const formaCobrir = (y, c) => `M0 100 L0 ${y} Q50 ${y - c} 100 ${y} L100 100 Z`;
+  const formaRevelar = (y, c) => `M0 0 L0 ${y} Q50 ${y + c} 100 ${y} L100 0 Z`;
+
+  function cobrir(label) {
     return new Promise((resolve) => {
-      gsap.timeline({ onComplete: () => { cortina.classList.remove('is-covering'); gsap.set(cortina, { clearProps: 'clipPath' }); resolve(); } })
-        .to(cortinaLabel, { yPercent: -110, duration: 0.7, ease: 'expo.in', delay: 0.15 })
-        .fromTo(cortina, { clipPath: 'inset(0% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 100% 0%)', duration: 1, ease: 'expo.inOut' }, '-=0.35');
-      setTimeout(resolve, 1600);
+      if (!cortina) { resolve(); return; }
+      cortina.classList.add('is-on');
+      cortinaLabel.textContent = label || '';
+      const st = { y: 100, c: 0 };
+      const desenhar = () => cortinaPath.setAttribute('d', formaCobrir(st.y, st.c));
+      gsap.timeline({ onComplete: resolve })
+        .to(st, { y: 0, duration: 0.95, ease: 'power3.inOut', onUpdate: desenhar }, 0)
+        .to(st, { keyframes: [{ c: 22, duration: 0.45, ease: 'power2.out' }, { c: 0, duration: 0.5, ease: 'power2.in' }], onUpdate: desenhar }, 0)
+        .fromTo(cortinaLabel, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, 0.5);
+    });
+  }
+
+  function revelar(label) {
+    return new Promise((resolve) => {
+      if (!cortina) { resolve(); return; }
+      cortina.classList.add('is-on');
+      cortinaLabel.textContent = label || '';
+      gsap.set(cortinaLabel, { opacity: 1, y: 0 });
+      const st = { y: 100, c: 0 };
+      const desenhar = () => cortinaPath.setAttribute('d', formaRevelar(st.y, st.c));
+      desenhar();
+      gsap.timeline({ onComplete: () => { cortina.classList.remove('is-on'); resolve(); } })
+        .to(cortinaLabel, { opacity: 0, y: -24, duration: 0.45, ease: 'power2.in' }, 0.1)
+        .to(st, { y: 0, duration: 1, ease: 'power3.inOut', onUpdate: desenhar }, 0.25)
+        .to(st, { keyframes: [{ c: 22, duration: 0.5, ease: 'power2.out' }, { c: 0, duration: 0.5, ease: 'power2.in' }], onUpdate: desenhar }, 0.25);
+      setTimeout(resolve, 700);  // a introdução da página começa enquanto a cortina sai
     });
   }
 
   function navegar(url, label) {
     store.set('gc-transicao', label || '');
-    cortinaLabel.textContent = label || '';
     if (lenis) lenis.stop();
+    cobrir(label).then(() => { w.location.href = url; });
+  }
+
+  function criarClone(src, r) {
+    const clone = d.createElement('div');
+    clone.className = 'zoom-clone';
+    Object.assign(clone.style, { left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, height: `${r.height}px` });
+    const ci = new Image();
+    ci.src = src;
+    ci.alt = '';
+    clone.appendChild(ci);
+    d.body.appendChild(clone);
+    return { clone, ci };
+  }
+
+  function navegarComZoom(url, img, label) {
+    const caixa = img.closest('[data-gl-media], .next__img') || img;
+    const src = img.currentSrc || img.src;
+    store.set('gc-zoom', JSON.stringify({ src, label }));
+    if (lenis) lenis.stop();
+    const { clone, ci } = criarClone(src, caixa.getBoundingClientRect());
+    gsap.to(camadasDaPagina(), { opacity: 0, duration: 0.55, ease: 'power2.out' });
     gsap.timeline({ onComplete: () => { w.location.href = url; } })
-      .fromTo(cortina, { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.85, ease: 'expo.inOut' })
-      .fromTo(cortinaLabel, { yPercent: 110 }, { yPercent: 0, duration: 0.7, ease: 'expo.out' }, '-=0.35');
+      .fromTo(ci, { filter: 'grayscale(1) contrast(1.1)' }, { filter: 'grayscale(0) contrast(1)', duration: 1.1, ease: 'power2.inOut' }, 0)
+      .to(clone, { left: 0, top: 0, width: w.innerWidth, height: w.innerHeight, duration: 1.1, ease: 'expo.inOut' }, 0)
+      .to(ci, { scale: 1.04, duration: 1.1, ease: 'expo.inOut' }, 0);
+  }
+
+  function chegar() {
+    store.set('gc-visto', '1');
+    const loaderEl = $('[data-loader]');
+    if (loaderEl) loaderEl.classList.add('is-done');
+    w.scrollTo(0, 0);
+
+    if (chegadaZoom === null) {
+      store.del('gc-transicao');
+      return revelar(chegadaCortina || '');
+    }
+
+    store.del('gc-zoom');
+    let info = {};
+    try { info = JSON.parse(chegadaZoom); } catch { /* ignora */ }
+    const capa = $('[data-cover]');
+    const { clone, ci } = criarClone(info.src || '', { left: 0, top: 0, width: w.innerWidth, height: w.innerHeight });
+    gsap.set(ci, { scale: 1.04 });
+    const sumir = () => gsap.to(clone, { opacity: 0, duration: 0.35, onComplete: () => clone.parentNode && clone.parentNode.removeChild(clone) });
+    if (!capa) { sumir(); return Promise.resolve(); }
+
+    const imgCapa = $('img', capa);
+    const capaPronta = imgCapa && !imgCapa.complete
+      ? Promise.race([
+        new Promise((r) => { imgCapa.addEventListener('load', r, { once: true }); imgCapa.addEventListener('error', r, { once: true }); }),
+        new Promise((r) => setTimeout(r, 1500)),
+      ])
+      : Promise.resolve();
+    return new Promise((resolve) => {
+      requestAnimationFrame(() => {
+        const r = capa.getBoundingClientRect();
+        gsap.timeline()
+          .to(clone, { left: r.left, top: r.top, width: r.width, height: r.height, duration: 1.15, ease: 'expo.inOut' }, 0.05)
+          .to(ci, { scale: 1, duration: 1.15, ease: 'expo.inOut' }, 0.05)
+          .add(() => resolve(), 0.55)
+          .add(() => { capaPronta.then(sumir); });
+      });
+    });
   }
 
   d.addEventListener('click', (e) => {
@@ -193,16 +280,25 @@
     if (!cortina || reduced) return;
     e.preventDefault();
     fecharMenu(true);
-    navegar(url.href, a.dataset.transition || a.textContent.trim().split('\n')[0]);
+    const label = a.dataset.transition || a.textContent.trim().split('\n')[0];
+    let img = a.hasAttribute('data-zoom') ? $('img', a) : null;
+    if (a.dataset.zoomIndex !== undefined) {
+      const item = $$('[data-feed-item]')[Number(a.dataset.zoomIndex)];
+      if (item) img = $('img', item);
+    }
+    if (img && img.getBoundingClientRect().width > 0) navegarComZoom(url.href, img, label);
+    else navegar(url.href, label);
   });
 
-  // Voltar pelo histórico (bfcache): garante que a cortina não fique cobrindo
+  // Voltar pelo histórico (bfcache): desfaz o estado de transição
   w.addEventListener('pageshow', (e) => {
-    if (e.persisted && cortina) {
-      cortina.classList.remove('is-covering');
-      gsap.set(cortina, { clearProps: 'clipPath' });
-      if (lenis) lenis.start();
-    }
+    if (!e.persisted) return;
+    if (cortina) cortina.classList.remove('is-on');
+    $$('.zoom-clone').forEach((c) => c.parentNode.removeChild(c));
+    gsap.set(camadasDaPagina(), { opacity: 1 });
+    store.del('gc-transicao');
+    store.del('gc-zoom');
+    if (lenis) lenis.start();
   });
 
   /* ------------------------------------------------------------------------
@@ -577,37 +673,14 @@
       });
     }
 
-    // Vitrine: revelação por máscara + parallax interno + leve escala
-    $$('[data-work]').forEach((work) => {
-      const media = $('.work__media', work);
-      const img = $('img', work);
-      if (!media) return;
-      if (!reduced) {
-        gsap.fromTo(media, { clipPath: 'inset(100% 0% 0% 0%)' }, {
-          clipPath: 'inset(0% 0% 0% 0%)', duration: 1.5, ease: 'expo.inOut',
-          scrollTrigger: { trigger: work, start: 'top 85%', once: true },
-        });
-        if (img) {
-          gsap.fromTo(img, { yPercent: -7 }, { yPercent: 7, ease: 'none', scrollTrigger: { trigger: media, start: 'top bottom', end: 'bottom top', scrub: true } });
-        }
-        gsap.fromTo($('.work__cap', work), { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1.2, scrollTrigger: { trigger: work, start: 'top 75%', once: true } });
-      }
-    });
+    // Coluna de trabalhos: o painel fixo acompanha o projeto em foco
+    painelDaColuna();
 
-    // Índice: linhas entram em sequência; miniaturas (mobile) com máscara
-    const linhas = $$('[data-row]');
-    if (linhas.length && !reduced) {
-      ST.batch(linhas, {
-        start: 'top 92%', once: true,
-        onEnter: (els) => gsap.fromTo(els, { opacity: 0, y: 40 }, { opacity: 1, y: 0, stagger: 0.08, duration: 1.2 }),
-      });
-      $$('.row__thumb').forEach((t) => {
-        gsap.fromTo(t, { clipPath: 'inset(0% 0% 100% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.3, ease: 'expo.inOut', scrollTrigger: { trigger: t, start: 'top 90%', once: true } });
-      });
+    // Arquivo: legendas entram em sequência
+    const legendas = $$('.arch__cap');
+    if (legendas.length && !reduced) {
+      ST.batch(legendas, { start: 'top 92%', once: true, onEnter: (els) => gsap.fromTo(els, { opacity: 0, y: 24 }, { opacity: 1, y: 0, stagger: 0.08, duration: 1.1 }) });
     }
-
-    // Serviços: as linhas desenham da esquerda para a direita
-    // (o reveal de opacidade já vem de [data-reveal])
 
     // Processo: rolagem horizontal fixa no desktop
     const pin = $('[data-process]');
@@ -654,15 +727,11 @@
       });
     }
 
-    // Página de projeto: capa abre com a rolagem e o navegador ganha profundidade
+    // Página de projeto: a capa se afasta devagar quando a página rola
     const capa = $('[data-cover]');
     if (capa && !reduced) {
-      gsap.fromTo(capa, { clipPath: 'inset(8% 10% 8% 10% round 6px)' }, {
-        clipPath: 'inset(0% 0% 0% 0% round 0px)', ease: 'none',
-        scrollTrigger: { trigger: capa, start: 'top 90%', end: 'top 15%', scrub: true },
-      });
       const img = $('img', capa);
-      if (img) gsap.fromTo(img, { scale: 1.25 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: capa, start: 'top bottom', end: 'bottom top', scrub: true } });
+      if (img) gsap.to(img, { yPercent: 14, scale: 1.08, ease: 'none', scrollTrigger: { trigger: capa, start: 'top top', end: 'bottom top', scrub: true } });
     }
     const browser = $('[data-browser]');
     if (browser && !reduced) {
@@ -674,21 +743,38 @@
   }
 
   /* ------------------------------------------------------------------------
-     Inclinação 3D nas imagens da vitrine (só com mouse)
+     Coluna de trabalhos: painel fixo com o projeto em foco
      ------------------------------------------------------------------------ */
-  function inclinacao() {
-    if (!fine || reduced) return;
-    $$('[data-tilt]').forEach((el) => {
-      gsap.set(el, { transformPerspective: 1100 });
-      const rx = gsap.quickTo(el, 'rotationX', { duration: 0.9, ease: 'power3.out' });
-      const ry = gsap.quickTo(el, 'rotationY', { duration: 0.9, ease: 'power3.out' });
-      el.addEventListener('pointermove', (e) => {
-        const r = el.getBoundingClientRect();
-        const px = (e.clientX - r.left) / r.width - 0.5;
-        const py = (e.clientY - r.top) / r.height - 0.5;
-        ry(px * 7); rx(-py * 7);
-      });
-      el.addEventListener('pointerleave', () => { rx(0); ry(0); });
+  function painelDaColuna() {
+    const itens = $$('[data-feed-item]');
+    const nomes = $('[data-feed-names]');
+    if (!itens.length || !nomes) return;
+    const metas = $$('[data-feed-meta] > div');
+    const num = $('[data-feed-num]');
+    const barra = $('[data-feed-bar]');
+    const link = $('[data-feed-link]');
+    let atual = -1;
+    const ativar = (i) => {
+      if (i === atual) return;
+      atual = i;
+      nomes.style.transform = `translateY(${-i * 1.04}em)`;
+      metas.forEach((m, k) => m.classList.toggle('is-active', k === i));
+      if (num) {
+        gsap.timeline()
+          .to(num, { yPercent: -60, opacity: 0, duration: 0.2, ease: 'power2.in' })
+          .add(() => { num.textContent = String(i + 1).padStart(2, '0'); })
+          .fromTo(num, { yPercent: 60, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.45 });
+      }
+      if (barra) barra.style.transform = `scaleX(${(i + 1) / itens.length})`;
+      if (link && metas[i]) {
+        link.href = metas[i].dataset.metaUrl;
+        link.dataset.transition = metas[i].dataset.metaNome;
+        link.dataset.zoomIndex = i;
+      }
+    };
+    ativar(0);
+    itens.forEach((it, i) => {
+      ST.create({ trigger: it, start: 'top 60%', end: 'bottom 60%', onToggle: (s) => { if (s.isActive) ativar(i); } });
     });
   }
 
@@ -709,65 +795,98 @@
         opacity: 0, y: 30, duration: 0.35, ease: 'power2.in', stagger: 0.02,
         onComplete: () => {
           works.forEach((wk) => wk.classList.toggle('is-out', !visiveis.includes(wk)));
-          gsap.set(works, { clearProps: 'gridColumn' });
           ST.refresh();
           gsap.fromTo(visiveis, { opacity: 0, y: 40 }, { opacity: 1, y: 0, stagger: 0.08, duration: 1.1 });
-          visiveis.forEach((wk) => {
-            const media = $('.work__media', wk);
-            if (media) gsap.set(media, { clipPath: 'inset(0% 0% 0% 0%)' });
-            const cap = $('.work__cap', wk);
-            if (cap) gsap.set(cap, { opacity: 1, y: 0 });
-          });
+          visiveis.forEach((wk) => { const cap = $('.arch__cap', wk); if (cap) gsap.set(cap, { opacity: 1, y: 0 }); });
         },
       });
     });
   }
 
   /* ------------------------------------------------------------------------
-     Prévia dos projetos em WebGL (índice): distorção pela velocidade do mouse,
-     separação RGB e onda na troca de projeto. Sem bibliotecas.
+     Imagens dos projetos em WebGL (sem bibliotecas)
+     - Duotom (tinta esverdeada + papel) por padrão
+     - O cursor deixa um rastro “líquido” que revela as cores originais,
+       com uma borda sálvia
+     - Rolar rápido curva a coluna (as bordas se abrem, como uma lente)
+       e borra levemente na vertical
+     - Parallax dentro de cada imagem e entrada suave ao aparecer
      ------------------------------------------------------------------------ */
-  function previaWebGL() {
-    const canvas = $('[data-preview-gl]');
-    const lista = $('[data-index-list]');
-    if (!canvas || !lista || !fine || reduced) return;
-    const gl = canvas.getContext('webgl', { premultipliedAlpha: true, alpha: true, antialias: true });
-    if (!gl) return;
+  function galeriaGL() {
+    const imgs = $$('img[data-gl]');
+    if (!imgs.length || reduced) return;
 
-    const vs = `
+    const canvas = d.createElement('canvas');
+    canvas.className = 'gl-stage';
+    canvas.setAttribute('aria-hidden', 'true');
+    const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: true });
+    if (!gl) return;
+    d.body.appendChild(canvas);
+
+    const VS = `
       attribute vec2 aPos;
-      uniform vec2 uRes; uniform vec4 uRect; uniform vec2 uVel; uniform float uScale;
+      uniform vec2 uView; uniform vec4 uRect; uniform float uBend; uniform float uEnter;
       varying vec2 vUv;
       void main() {
         vUv = aPos;
-        vec2 c = aPos - 0.5;
-        float dd = dot(c, c) * 2.0;
-        vec2 px = uRect.xy + (c * uScale + 0.5) * uRect.zw - uVel * dd * 1.4;
-        gl_Position = vec4(px.x / uRes.x * 2.0 - 1.0, 1.0 - px.y / uRes.y * 2.0, 0.0, 1.0);
+        vec2 px = uRect.xy + aPos * uRect.zw;
+        px.y += (1.0 - uEnter) * 90.0;
+        float ny = clamp(px.y / uView.y * 2.0 - 1.0, -1.4, 1.4);
+        float cx = uRect.x + uRect.z * 0.5;
+        px.x += (px.x - cx) * uBend * ny * ny;
+        px.y += sin(aPos.x * 3.14159) * uBend * 70.0 * ny;
+        gl_Position = vec4(px.x / uView.x * 2.0 - 1.0, 1.0 - px.y / uView.y * 2.0, 0.0, 1.0);
       }`;
-    const fs = `
-      precision mediump float;
-      uniform sampler2D uTex; uniform float uAlpha; uniform vec2 uShift; uniform float uTime; uniform float uWave;
+    const FS = `
+      precision highp float;
+      uniform sampler2D uTex; uniform sampler2D uMask;
+      uniform vec2 uRes; uniform vec2 uPlane; uniform vec2 uImg;
+      uniform float uTime; uniform float uVel; uniform float uPar; uniform float uEnter; uniform float uColor;
+      uniform vec3 uDark; uniform vec3 uLight; uniform vec3 uRim;
       varying vec2 vUv;
+      float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+      float noise(vec2 p) {
+        vec2 i = floor(p); vec2 f = fract(p); f = f * f * (3.0 - 2.0 * f);
+        return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), f.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), f.x), f.y);
+      }
       void main() {
-        vec2 uv = vUv;
-        uv.y += sin(uv.x * 9.0 + uTime * 3.0) * 0.025 * uWave;
-        uv.x += cos(uv.y * 7.0 + uTime * 2.0) * 0.012 * uWave;
-        float r = texture2D(uTex, uv + uShift).r;
-        float g = texture2D(uTex, uv).g;
-        float b = texture2D(uTex, uv - uShift).b;
-        gl_FragColor = vec4(r, g, b, 1.0) * uAlpha;
+        // object-fit: cover alinhado ao topo, com folga para o parallax
+        float pr = uPlane.x / uPlane.y; float ir = uImg.x / uImg.y;
+        vec2 s = pr > ir ? vec2(1.0, ir / pr) : vec2(pr / ir, 1.0);
+        s /= 1.1;
+        vec2 uv = vUv * s;
+        uv.x += (1.0 - s.x) * 0.5;
+        uv.y += (1.0 - s.y) * clamp(0.5 + uPar * 0.5, 0.0, 1.0);
+
+        float v = clamp(uVel, -1.0, 1.0);
+        vec3 c = texture2D(uTex, uv).rgb * 0.4
+               + texture2D(uTex, uv + vec2(0.0, v * 0.018)).rgb * 0.3
+               + texture2D(uTex, uv - vec2(0.0, v * 0.018)).rgb * 0.3;
+
+        float lum = dot(c, vec3(0.299, 0.587, 0.114));
+        vec3 duo = mix(uDark, uLight, smoothstep(0.04, 0.96, lum));
+
+        vec2 sp = vec2(gl_FragCoord.x / uRes.x, 1.0 - gl_FragCoord.y / uRes.y);
+        float n = noise(sp * vec2(9.0, 6.0) + uTime * 0.5);
+        float m = texture2D(uMask, sp + (n - 0.5) * 0.035).r;
+        float reveal = smoothstep(0.3, 0.42, m);
+        float rim = smoothstep(0.16, 0.28, m) * (1.0 - smoothstep(0.3, 0.4, m));
+
+        vec3 col = mix(duo, c, max(reveal, uColor));
+        col = mix(col, uRim, rim * 0.9 * (1.0 - uColor));
+        gl_FragColor = vec4(col, 1.0) * uEnter;
       }`;
-    const sh = (tipo, src) => { const s = gl.createShader(tipo); gl.shaderSource(s, src); gl.compileShader(s); return s; };
+
+    const compilar = (tipo, src) => { const sh = gl.createShader(tipo); gl.shaderSource(sh, src); gl.compileShader(sh); return sh; };
     const prog = gl.createProgram();
-    gl.attachShader(prog, sh(gl.VERTEX_SHADER, vs));
-    gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, fs));
+    gl.attachShader(prog, compilar(gl.VERTEX_SHADER, VS));
+    gl.attachShader(prog, compilar(gl.FRAGMENT_SHADER, FS));
     gl.linkProgram(prog);
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { canvas.parentNode.removeChild(canvas); return; }
     gl.useProgram(prog);
 
-    // Malha subdividida para permitir a curvatura
-    const NX = 24; const NY = 16;
+    // Malha subdividida (permite a curvatura)
+    const NX = 20; const NY = 20;
     const verts = []; const idx = [];
     for (let y = 0; y <= NY; y++) for (let x = 0; x <= NX; x++) verts.push(x / NX, y / NY);
     for (let y = 0; y < NY; y++) {
@@ -787,94 +906,144 @@
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
     const U = {};
-    ['uRes', 'uRect', 'uVel', 'uScale', 'uTex', 'uAlpha', 'uShift', 'uTime', 'uWave'].forEach((n) => { U[n] = gl.getUniformLocation(prog, n); });
+    ['uView', 'uRect', 'uBend', 'uEnter', 'uTex', 'uMask', 'uRes', 'uPlane', 'uImg', 'uTime', 'uVel', 'uPar', 'uColor', 'uDark', 'uLight', 'uRim']
+      .forEach((n) => { U[n] = gl.getUniformLocation(prog, n); });
+    const rgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+    gl.uniform3fv(U.uDark, rgb('#14211a'));
+    gl.uniform3fv(U.uLight, rgb('#eeede9'));
+    gl.uniform3fv(U.uRim, rgb('#a3b899'));
+    gl.uniform1i(U.uTex, 0);
+    gl.uniform1i(U.uMask, 1);
 
-    let dpr = 1;
+    const novaTextura = () => {
+      const t = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, t);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      return t;
+    };
+
+    // Máscara do rastro (canvas 2D em 1/4 da resolução)
+    const mascara = d.createElement('canvas');
+    const mctx = mascara.getContext('2d');
+    const texMascara = novaTextura();
+    const ESC = 0.25;
+    let dpr = 1; let VW = 0; let VH = 0;
     const redimensionar = () => {
       dpr = Math.min(w.devicePixelRatio || 1, 2);
-      canvas.width = w.innerWidth * dpr; canvas.height = w.innerHeight * dpr;
+      VW = w.innerWidth; VH = w.innerHeight;
+      canvas.width = Math.round(VW * dpr); canvas.height = Math.round(VH * dpr);
       gl.viewport(0, 0, canvas.width, canvas.height);
+      mascara.width = Math.ceil(VW * ESC); mascara.height = Math.ceil(VH * ESC);
     };
     redimensionar();
     w.addEventListener('resize', redimensionar);
 
-    const texturas = new Map();
-    const carregar = (src) => new Promise((resolve) => {
-      if (texturas.has(src)) { resolve(texturas.get(src)); return; }
-      const img = new Image();
-      img.decoding = 'async';
-      img.onload = () => {
-        const t = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, t);
-        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        texturas.set(src, t);
-        resolve(t);
+    // Pontos do rastro (mouse e toque)
+    let ultimo = null;
+    let pintadoEm = 0;
+    const pintar = (x, y) => {
+      const p = { x: x * ESC, y: y * ESC };
+      const de = ultimo || p;
+      const vel = Math.hypot(p.x - de.x, p.y - de.y);
+      mctx.lineCap = 'round';
+      mctx.lineJoin = 'round';
+      mctx.strokeStyle = '#fff';
+      mctx.shadowColor = '#fff';
+      mctx.shadowBlur = 10;
+      mctx.lineWidth = clamp(10 + vel * 0.9, 10, 30);
+      mctx.beginPath();
+      mctx.moveTo(de.x, de.y);
+      mctx.lineTo(p.x + 0.01, p.y);
+      mctx.stroke();
+      ultimo = p;
+      pintadoEm = performance.now();
+    };
+    w.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') pintar(e.clientX, e.clientY); }, { passive: true });
+    w.addEventListener('touchmove', (e) => { const t = e.touches[0]; if (t) pintar(t.clientX, t.clientY); }, { passive: true });
+    w.addEventListener('touchend', () => { ultimo = null; }, { passive: true });
+    d.documentElement.addEventListener('pointerleave', () => { ultimo = null; });
+
+    // Planos: um por imagem
+    const planos = imgs.map((img) => ({ img, caixa: img.closest('[data-gl-media]') || img, tex: null, w: 1, h: 1, entrada: 0, entrou: false }));
+    const carregar = (p) => {
+      if (p.tex || p.carregando) return;
+      p.carregando = true;
+      const fonte = new Image();
+      fonte.decoding = 'async';
+      fonte.onload = () => {
+        p.tex = novaTextura();
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, fonte);
+        p.w = fonte.naturalWidth; p.h = fonte.naturalHeight;
+        p.caixa.classList.add('gl-ready');
       };
-      img.onerror = () => resolve(null);
-      img.src = src;
+      fonte.src = p.img.currentSrc || p.img.src;
+    };
+    planos.forEach((p) => {
+      if (p.img.complete && p.img.naturalWidth) carregar(p);
+      else p.img.addEventListener('load', () => carregar(p), { once: true });
     });
-    // Pré-carrega as texturas quando o índice se aproxima da tela
-    new IntersectionObserver(([en], obs) => {
-      if (!en.isIntersecting) return;
-      obs.disconnect();
-      $$('[data-row]', lista).forEach((r) => carregar(r.dataset.preview));
-    }, { rootMargin: '400px' }).observe(lista);
 
-    const estado = { x: mouse.x, y: mouse.y, alpha: 0, scale: 0.8, wave: 0, tex: null };
-    const alvo = { alpha: 0, scale: 0.8 };
-    let rodando = false;
     let tempo = 0;
-
-    const loop = () => {
+    let ultimoScroll = w.scrollY;
+    let vel = 0;
+    gsap.ticker.add(() => {
       tempo += 0.016;
-      const largura = clamp(w.innerWidth * 0.24, 260, 440);
-      const altura = largura * 10 / 16;
-      estado.x = lerp(estado.x, mouse.x, 0.13);
-      estado.y = lerp(estado.y, mouse.y, 0.13);
-      estado.alpha = lerp(estado.alpha, alvo.alpha, 0.14);
-      estado.scale = lerp(estado.scale, alvo.scale, 0.12);
-      const vx = clamp(mouse.x - estado.x, -160, 160);
-      const vy = clamp(mouse.y - estado.y, -160, 160);
+      // Velocidade da rolagem (suavizada)
+      const sy = w.scrollY;
+      const bruto = lenis ? lenis.velocity : sy - ultimoScroll;
+      ultimoScroll = sy;
+      vel = lerp(vel, bruto, 0.12);
+      const curva = clamp(Math.abs(vel) * 0.0075, 0, 0.3);
+
+      // O rastro vai sumindo aos poucos
+      const ativo = performance.now() - pintadoEm < 4000;
+      if (ativo) {
+        mctx.globalCompositeOperation = 'destination-out';
+        mctx.fillStyle = 'rgba(0,0,0,0.028)';
+        mctx.fillRect(0, 0, mascara.width, mascara.height);
+        mctx.globalCompositeOperation = 'source-over';
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, texMascara);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, mascara);
+        gl.activeTexture(gl.TEXTURE0);
+      }
 
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
-      if (estado.tex && estado.alpha > 0.002) {
-        gl.uniform2f(U.uRes, w.innerWidth, w.innerHeight);
-        gl.uniform4f(U.uRect, estado.x - largura / 2, estado.y - altura / 2, largura, altura);
-        gl.uniform2f(U.uVel, vx, vy);
-        gl.uniform1f(U.uScale, estado.scale);
-        gl.uniform1f(U.uAlpha, estado.alpha);
-        gl.uniform2f(U.uShift, vx / largura * 0.06, vy / altura * 0.06);
-        gl.uniform1f(U.uTime, tempo);
-        gl.uniform1f(U.uWave, estado.wave);
-        gl.bindTexture(gl.TEXTURE_2D, estado.tex);
-        gl.uniform1i(U.uTex, 0);
+      gl.uniform2f(U.uView, VW, VH);
+      gl.uniform2f(U.uRes, canvas.width, canvas.height);
+      gl.uniform1f(U.uTime, tempo);
+      gl.uniform1f(U.uBend, curva);
+      gl.uniform1f(U.uVel, vel / 40);
+
+      for (const p of planos) {
+        if (!p.tex) continue;
+        const r = p.caixa.getBoundingClientRect();
+        if (r.bottom < -200 || r.top > VH + 200 || r.width === 0) continue;
+        if (!p.entrou && r.top < VH * 0.96) {
+          p.entrou = true;
+          gsap.to(p, { entrada: 1, duration: 1.6, ease: 'expo.out' });
+        }
+        const centro = (r.top + r.height / 2) / VH;  // 0 = topo, 1 = base
+        gl.uniform4f(U.uRect, r.left, r.top, r.width, r.height);
+        gl.uniform2f(U.uPlane, r.width, r.height);
+        gl.uniform2f(U.uImg, p.w, p.h);
+        gl.uniform1f(U.uPar, clamp(centro * 2 - 1, -1, 1));
+        gl.uniform1f(U.uEnter, p.entrada);
+        // Sem mouse (celular): a imagem no centro da tela ganha cor aos poucos
+        const alvoCor = fine ? 0 : 1 - clamp((Math.abs(centro - 0.5) - 0.12) / 0.25, 0, 1);
+        p.cor = lerp(p.cor || 0, alvoCor, 0.08);
+        gl.uniform1f(U.uColor, p.cor);
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, texMascara);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, p.tex);
         gl.drawElements(gl.TRIANGLES, idx.length, gl.UNSIGNED_SHORT, 0);
       }
-      if (alvo.alpha === 0 && estado.alpha < 0.002) { rodando = false; gl.clear(gl.COLOR_BUFFER_BIT); return; }
-      requestAnimationFrame(loop);
-    };
-    const iniciar = () => { if (!rodando) { rodando = true; estado.x = mouse.x; estado.y = mouse.y; requestAnimationFrame(loop); } };
-
-    $$('[data-row]', lista).forEach((row) => {
-      row.addEventListener('pointerenter', async () => {
-        if (!desktop()) return;
-        const t = await carregar(row.dataset.preview);
-        if (!t || !row.matches(':hover')) return;
-        const trocou = estado.tex && estado.tex !== t;
-        estado.tex = t;
-        alvo.alpha = 1; alvo.scale = 1;
-        if (trocou) { estado.wave = 1; gsap.to(estado, { wave: 0, duration: 0.9, ease: 'power3.out', overwrite: true }); }
-        iniciar();
-      });
     });
-    lista.addEventListener('pointerleave', () => { alvo.alpha = 0; alvo.scale = 0.8; });
-    w.addEventListener('scroll', () => { if (!lista.matches(':hover')) { alvo.alpha = 0; alvo.scale = 0.8; } }, { passive: true });
   }
 
   /* ------------------------------------------------------------------------
@@ -882,11 +1051,10 @@
      ------------------------------------------------------------------------ */
   heroCanvas();
   heroPeso();
-  inclinacao();
   filtros();
-  previaWebGL();
+  galeriaGL();
 
-  const comecar = veioDeTransicao ? sairDaCortina() : rodarLoader();
+  const comecar = veioDeTransicao ? chegar() : rodarLoader();
   comecar.then(() => {
     if (lenis) lenis.start();
     introducao();
