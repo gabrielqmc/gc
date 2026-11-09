@@ -39,7 +39,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="../assets/css/style.css?v=d47fa59b">
+    <link rel="stylesheet" href="../assets/css/style.css?v=3933eb9e">
 
     <script>
         // Marca que o JS está ativo (os estados iniciais das animações dependem disso).
@@ -47,6 +47,10 @@
         (function (d) {
             var h = d.documentElement;
             h.classList.add('js');
+            // Tema: escolha salva > preferência do sistema
+            var salvo = null;
+            try { salvo = localStorage.getItem('gc-tema'); } catch (e) {}
+            if (salvo === 'escuro' || (!salvo && window.matchMedia('(prefers-color-scheme: dark)').matches)) h.classList.add('dark');
             if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) h.classList.add('reduced');
             setTimeout(function () { if (!window.__gcPronto) { h.classList.remove('js'); h.classList.add('reduced'); } }, 6000);
         })(document);
@@ -96,13 +100,17 @@
             <a href="../projetos.html" data-transition="Projetos"><span class="roll">Projetos</span><sup>05</sup></a>
             <a href="../index.html#servicos"><span class="roll">Serviços</span></a>
             <a href="../index.html#processo"><span class="roll">Como funciona</span></a>
+            <button type="button" class="theme-btn" data-tema-toggle aria-label="Alternar modo escuro" aria-pressed="false" data-cursor="link"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><mask id="lua-a"><rect x="-4" y="-4" width="32" height="32" fill="#fff"/><circle class="lua-sombra" cx="30" cy="-6" r="8" fill="#000"/></mask></defs><circle class="sol-centro" cx="12" cy="12" r="5" fill="currentColor" mask="url(#lua-a)"/><g class="sol-raios" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 1.5v2.5M12 20v2.5M1.5 12H4M20 12h2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/></g></svg></button>
             <a href="https://wa.me/5514997464443?text=Ol%C3%A1%2C%20tenho%20interesse%20em%20desenvolver%20um%20site%20para%20o%20meu%20neg%C3%B3cio!" target="_blank" rel="noopener" class="btn magnetic" data-cursor="link"><span class="magnetic-in"><span class="roll">Iniciar Projeto</span></span></a>
         </nav>
 
+        <div class="header-acoes">
+            <button type="button" class="theme-btn" data-tema-toggle aria-label="Alternar modo escuro" aria-pressed="false" data-cursor="link"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><mask id="lua-b"><rect x="-4" y="-4" width="32" height="32" fill="#fff"/><circle class="lua-sombra" cx="30" cy="-6" r="8" fill="#000"/></mask></defs><circle class="sol-centro" cx="12" cy="12" r="5" fill="currentColor" mask="url(#lua-b)"/><g class="sol-raios" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 1.5v2.5M12 20v2.5M1.5 12H4M20 12h2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/></g></svg></button>
         <button type="button" class="menu-btn" data-menu-toggle aria-expanded="false" aria-controls="menu">
             <span data-menu-label>Menu</span>
             <span class="menu-btn__icon" aria-hidden="true"></span>
         </button>
+        </div>
     </header>
 
     <!-- Menu mobile -->
@@ -131,13 +139,13 @@
     </div>
 
     <main>
-        <div class="proj-top" data-section="Projeto">
+        <div class="proj-top" data-section="Projeto" data-tema="base">
             <div class="proj-cover" data-cover>
                 <img src="../assets/img/projetos/gerlany-melo.webp" srcset="../assets/img/projetos/gerlany-melo-640.webp 640w, ../assets/img/projetos/gerlany-melo.webp 1200w, ../assets/img/projetos/gerlany-melo-1920.webp 1920w" sizes="100vw" width="1200" height="750" fetchpriority="high" decoding="async" alt="Página inicial do site Dra. Gerlany Melo" class="cover-img">
             </div>
         </div>
 
-        <section class="proj-hero wrap">
+        <section class="proj-hero wrap" data-tema="base">
             <div class="proj-hero__meta mono">
                 <a href="../projetos.html" data-transition="Projetos" class="muted"><span class="roll">← Todos os projetos</span></a>
                 <span class="tabular" data-reveal="fade">Projeto 01 / 05</span>
@@ -151,7 +159,7 @@
             </div>
         </section>
 
-        <section class="proj-info wrap" data-section="Sobre">
+        <section class="proj-info wrap" data-section="Sobre" data-tema="sobre">
             <ul class="proj-info__list" data-reveal="up">
                 <li><span class="mono muted">Cliente</span><span>Dra. Gerlany Melo</span></li>
                 <li><span class="mono muted">Segmento</span><span>Estética, Website</span></li>
@@ -161,7 +169,7 @@
             <p class="proj-info__text" data-split="words">Design sofisticado focado em transmitir segurança, beleza natural e conversão em agendamentos de tratamentos faciais.</p>
         </section>
 
-        <div class="proj-browser" data-section="Site">
+        <div class="proj-browser" data-section="Site" data-tema="sobre">
             <div class="browser" data-browser>
                 <div class="browser__bar">
                     <span class="browser__dots" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -174,14 +182,14 @@
             </div>
         </div>
 
-        <a href="maira-justo.html" class="next wrap" data-transition="Maira Justo" data-zoom data-cursor-label="Próximo" data-section="Próximo">
+        <a href="maira-justo.html" class="next wrap" data-transition="Maira Justo" data-zoom data-cursor-label="Próximo" data-section="Próximo" data-tema="proximo">
             <div class="next__label mono muted"><span>Próximo projeto</span><span class="tabular">02 / 05</span></div>
             <span class="next__name">Maira Justo</span>
             <div class="next__img"><img src="../assets/img/projetos/maira-justo.webp" srcset="../assets/img/projetos/maira-justo-640.webp 640w, ../assets/img/projetos/maira-justo.webp 1200w, ../assets/img/projetos/maira-justo-1920.webp 1920w" sizes="420px" width="1200" height="750" loading="lazy" decoding="async" alt=""></div>
         </a>
     </main>
 
-    <footer class="footer on-dark wrap" data-section="Contato">
+    <footer class="footer wrap" data-section="Contato" data-tema="noite">
         <div class="footer__grid mono">
             <div class="footer__col">
                 <span class="muted">Redes</span>
@@ -209,7 +217,7 @@
     <script src="../assets/js/vendor/gsap.min.js?v=3.13.0" defer></script>
     <script src="../assets/js/vendor/ScrollTrigger.min.js?v=3.13.0" defer></script>
     <script src="../assets/js/vendor/lenis.min.js?v=1.3.19" defer></script>
-    <script src="../assets/js/main.js?v=86543995" defer></script>
+    <script src="../assets/js/main.js?v=375160cb" defer></script>
 
 </body>
 </html>

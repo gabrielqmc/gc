@@ -131,6 +131,98 @@
   };
 
   /* ------------------------------------------------------------------------
+     Cores: cada seção tem uma paleta (claro/escuro). Ao rolar, o fundo e o
+     texto fazem uma transição suave para a paleta da seção em foco — as
+     imagens em WebGL acompanham, porque o duotom usa essas mesmas cores.
+     ------------------------------------------------------------------------ */
+  const PALETAS = {
+    claro: {
+      base: { bg: '#eeede9', fg: '#111110' },
+      manifesto: { bg: '#dfe4d6', fg: '#14211a' },
+      obras: { bg: '#ebe7de', fg: '#151412' },
+      servicos: { bg: '#e2dccd', fg: '#1d1a14' },
+      processo: { bg: '#d3dbc9', fg: '#132019' },
+      sobre: { bg: '#e2dccd', fg: '#1d1a14' },
+      proximo: { bg: '#d3dbc9', fg: '#132019' },
+      noite: { bg: '#111110', fg: '#eeede9' },
+    },
+    escuro: {
+      base: { bg: '#111110', fg: '#eeede9' },
+      manifesto: { bg: '#121c16', fg: '#e3eadb' },
+      obras: { bg: '#151412', fg: '#efebe2' },
+      servicos: { bg: '#1c1913', fg: '#ece5d4' },
+      processo: { bg: '#15201a', fg: '#dfe7d5' },
+      sobre: { bg: '#1c1913', fg: '#ece5d4' },
+      proximo: { bg: '#15201a', fg: '#dfe7d5' },
+      noite: { bg: '#080808', fg: '#eeede9' },
+    },
+  };
+  const metaTema = $('meta[name="theme-color"]');
+  const modo = () => (h.classList.contains('dark') ? 'escuro' : 'claro');
+  let secaoTema = 'base';
+  const tema = { ...PALETAS[modo()].base };
+  const escreverTema = () => {
+    h.style.setProperty('--bg', tema.bg);
+    h.style.setProperty('--fg', tema.fg);
+    if (metaTema) metaTema.setAttribute('content', tema.bg);
+  };
+  function aplicarTema(nome, imediato) {
+    secaoTema = nome in PALETAS.claro ? nome : 'base';
+    const alvo = PALETAS[modo()][secaoTema];
+    if (imediato || reduced) { gsap.killTweensOf(tema); Object.assign(tema, alvo); escreverTema(); return; }
+    gsap.to(tema, { ...alvo, duration: 1.3, ease: 'power2.inOut', overwrite: true, onUpdate: escreverTema });
+  }
+  // Converte '#rrggbb' ou 'rgb(a)(r, g, b)' em [r, g, b] de 0 a 1
+  const paraRgb = (cor) => {
+    if (cor[0] === '#') return [1, 3, 5].map((i) => parseInt(cor.slice(i, i + 2), 16) / 255);
+    const n = cor.match(/[\d.]+/g) || [0, 0, 0];
+    return [n[0] / 255, n[1] / 255, n[2] / 255];
+  };
+  const coresDoTema = () => ({ bg: paraRgb(tema.bg), fg: paraRgb(tema.fg) });
+  aplicarTema('base', true);
+
+  function temaPorSecao() {
+    $$('[data-tema]').forEach((sec) => {
+      ST.create({
+        trigger: sec, start: 'top 55%', end: 'bottom 55%',
+        onToggle: (s) => { if (s.isActive && sec.dataset.tema !== secaoTema) aplicarTema(sec.dataset.tema); },
+      });
+    });
+  }
+
+  // Botão claro/escuro: revelação circular a partir do botão (View Transitions)
+  $$('[data-tema-toggle]').forEach((btn) => {
+    btn.setAttribute('aria-pressed', h.classList.contains('dark'));
+    btn.addEventListener('click', () => {
+      const escuro = !h.classList.contains('dark');
+      const trocar = () => {
+        h.classList.toggle('dark', escuro);
+        try { localStorage.setItem('gc-tema', escuro ? 'escuro' : 'claro'); } catch { /* sem storage */ }
+        $$('[data-tema-toggle]').forEach((b) => b.setAttribute('aria-pressed', escuro));
+        aplicarTema(secaoTema, true);
+      };
+      if (d.startViewTransition && !reduced) {
+        const r = btn.getBoundingClientRect();
+        const x = r.left + r.width / 2;
+        const y = r.top + r.height / 2;
+        const raio = Math.hypot(Math.max(x, w.innerWidth - x), Math.max(y, w.innerHeight - y));
+        const vt = d.startViewTransition(trocar);
+        vt.ready.then(() => {
+          h.animate(
+            { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${raio}px at ${x}px ${y}px)`] },
+            { duration: 1000, easing: 'cubic-bezier(0.76, 0, 0.24, 1)', pseudoElement: '::view-transition-new(root)' },
+          );
+        }).catch(() => {});
+      } else {
+        h.classList.toggle('dark', escuro);
+        try { localStorage.setItem('gc-tema', escuro ? 'escuro' : 'claro'); } catch { /* sem storage */ }
+        $$('[data-tema-toggle]').forEach((b) => b.setAttribute('aria-pressed', escuro));
+        aplicarTema(secaoTema);
+      }
+    });
+  });
+
+  /* ------------------------------------------------------------------------
      Relógio (horário de Brasília)
      ------------------------------------------------------------------------ */
   const clocks = $$('[data-clock]');
@@ -506,7 +598,8 @@
       const R = desktop() ? 170 : 120;
       const vel = Math.min(Math.hypot(mouse.vx, mouse.vy), 60);
       mouse.vx *= 0.9; mouse.vy *= 0.9;
-      ctx.fillStyle = 'rgba(17,17,16,0.26)';
+      const fg = coresDoTema().fg;
+      ctx.fillStyle = `rgba(${Math.round(fg[0] * 255)},${Math.round(fg[1] * 255)},${Math.round(fg[2] * 255)},0.26)`;
       for (const p of pts) {
         let tx = p.ox;
         let ty = p.oy + (reduced ? 0 : Math.sin(t + p.ox * 0.008 + p.oy * 0.004) * 1.6);
@@ -987,6 +1080,8 @@
     });
 
     let tempo = 0;
+    let ultimoQuadro = 0;
+    let mascaraLimpa = true;
     let ultimoScroll = w.scrollY;
     let vel = 0;
     gsap.ticker.add(() => {
@@ -998,18 +1093,37 @@
       vel = lerp(vel, bruto, 0.12);
       const curva = clamp(Math.abs(vel) * 0.0075, 0, 0.3);
 
-      // O rastro vai sumindo aos poucos
-      const ativo = performance.now() - pintadoEm < 4000;
-      if (ativo) {
-        mctx.globalCompositeOperation = 'destination-out';
-        mctx.fillStyle = 'rgba(0,0,0,0.028)';
-        mctx.fillRect(0, 0, mascara.width, mascara.height);
-        mctx.globalCompositeOperation = 'source-over';
+      // O rastro vai sumindo: meia-vida de ~180 ms (independente da taxa de quadros),
+      // e a máscara é zerada de vez pouco depois de o cursor parar, para não sobrar resto.
+      const agora = performance.now();
+      const dt = Math.min(64, agora - (ultimoQuadro || agora));
+      ultimoQuadro = agora;
+      const parado = agora - pintadoEm;
+      const ativo = parado < 1600;
+      if (ativo || !mascaraLimpa) {
+        if (ativo) {
+          mctx.globalCompositeOperation = 'destination-out';
+          mctx.fillStyle = `rgba(0,0,0,${(1 - Math.pow(0.5, dt / 180)).toFixed(3)})`;
+          mctx.fillRect(0, 0, mascara.width, mascara.height);
+          mctx.globalCompositeOperation = 'source-over';
+          mascaraLimpa = false;
+        } else {
+          mctx.clearRect(0, 0, mascara.width, mascara.height);
+          mascaraLimpa = true;
+        }
         gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_2D, texMascara);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, mascara);
         gl.activeTexture(gl.TEXTURE0);
       }
+
+      // Duotom acompanha a paleta da seção (claro = fundo; escuro = texto puxado para o verde)
+      const cores = coresDoTema();
+      const lum = (c) => c[0] * 0.299 + c[1] * 0.587 + c[2] * 0.114;
+      const [claroT, escuroT] = lum(cores.bg) > lum(cores.fg) ? [cores.bg, cores.fg] : [cores.fg, cores.bg];
+      const verde = [0.078, 0.129, 0.102];
+      gl.uniform3fv(U.uLight, claroT);
+      gl.uniform3fv(U.uDark, escuroT.map((v, i) => v * 0.5 + verde[i] * 0.5));
 
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
@@ -1059,6 +1173,7 @@
     if (lenis) lenis.start();
     introducao();
     rolagem();
+    temaPorSecao();
     if (location.hash) {
       const alvo = d.getElementById(decodeURIComponent(location.hash.slice(1)));
       if (alvo) setTimeout(() => scrollTo(alvo, { immediate: true }), 50);

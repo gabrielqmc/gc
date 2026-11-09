@@ -43,6 +43,10 @@
         (function (d) {
             var h = d.documentElement;
             h.classList.add('js');
+            // Tema: escolha salva > preferência do sistema
+            var salvo = null;
+            try { salvo = localStorage.getItem('gc-tema'); } catch (e) {}
+            if (salvo === 'escuro' || (!salvo && window.matchMedia('(prefers-color-scheme: dark)').matches)) h.classList.add('dark');
             if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) h.classList.add('reduced');
             setTimeout(function () { if (!window.__gcPronto) { h.classList.remove('js'); h.classList.add('reduced'); } }, 6000);
         })(document);

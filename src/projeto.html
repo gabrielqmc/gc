@@ -9,13 +9,13 @@
 {{> header}}
 
     <main>
-        <div class="proj-top" data-section="Projeto">
+        <div class="proj-top" data-section="Projeto" data-tema="base">
             <div class="proj-cover" data-cover>
                 {{pCapa}}
             </div>
         </div>
 
-        <section class="proj-hero wrap">
+        <section class="proj-hero wrap" data-tema="base">
             <div class="proj-hero__meta mono">
                 <a href="{{raiz}}projetos.html" data-transition="Projetos" class="muted"><span class="roll">← Todos os projetos</span></a>
                 <span class="tabular" data-reveal="fade">Projeto {{pNum}} / {{totalProjetos2}}</span>
@@ -29,7 +29,7 @@
             </div>
         </section>
 
-        <section class="proj-info wrap" data-section="Sobre">
+        <section class="proj-info wrap" data-section="Sobre" data-tema="sobre">
             <ul class="proj-info__list" data-reveal="up">
                 <li><span class="mono muted">Cliente</span><span>{{pNome}}</span></li>
                 <li><span class="mono muted">Segmento</span><span>{{pTags}}</span></li>
@@ -39,7 +39,7 @@
             <p class="proj-info__text" data-split="words">{{pDescricao}}</p>
         </section>
 
-        <div class="proj-browser" data-section="Site">
+        <div class="proj-browser" data-section="Site" data-tema="sobre">
             <div class="browser" data-browser>
                 <div class="browser__bar">
                     <span class="browser__dots" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -52,7 +52,7 @@
             </div>
         </div>
 
-        <a href="{{proxUrl}}" class="next wrap" data-transition="{{proxNome}}" data-zoom data-cursor-label="Próximo" data-section="Próximo">
+        <a href="{{proxUrl}}" class="next wrap" data-transition="{{proxNome}}" data-zoom data-cursor-label="Próximo" data-section="Próximo" data-tema="proximo">
             <div class="next__label mono muted"><span>Próximo projeto</span><span class="tabular">{{proxNum}} / {{totalProjetos2}}</span></div>
             <span class="next__name">{{proxNome}}</span>
             <div class="next__img">{{proxImagem}}</div>

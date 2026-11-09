@@ -48,6 +48,9 @@ const versaoJs = hash(JS_PRINCIPAL);
 const projetos = dados.projetos || [];
 const total = projetos.length;
 const dois = (n) => String(n).padStart(2, '0');
+// A página inicial mostra no máximo 5 projetos (os primeiros da lista); o resto fica em projetos.html
+const LIMITE_HOME = 5;
+const naHome = projetos.slice(0, LIMITE_HOME);
 const linkWhats = (msg) => `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(msg || '')}`;
 const ano = new Date().getFullYear();
 const paginaProjeto = (p) => `${PASTA_TRABALHOS}/${p.slug}.html`;
@@ -73,9 +76,16 @@ saidas.push({
     ogDescricao: 'Seu negócio precisa de mais do que um site bonito. Crio plataformas digitais rápidas e focadas em conversão para destacar sua marca e atrair clientes na internet.',
     inicio: '#inicio',
     home: '',
-    feedItens: projetos.map((p, i) => feedItem(p, '', i)).join('\n'),
-    feedNomes: projetos.map((p) => `                            <span>${esc(p.nome)}</span>`).join('\n'),
-    feedMeta: projetos.map((p, i) => `                            <div${i === 0 ? ' class="is-active"' : ''} data-meta-url="${paginaProjeto(p)}" data-meta-nome="${esc(p.nome)}"><span class="mono muted">${esc((p.tags || []).join(' · '))}</span><p>${esc(p.descricao)}</p></div>`).join('\n'),
+    totalHome2: dois(naHome.length),
+    feedItens: naHome.map((p, i) => feedItem(p, '', i)).join('\n') + (total > naHome.length ? `
+                    <li>
+                        <a href="projetos.html" class="feed__more" data-transition="Projetos" data-cursor-label="Abrir">
+                            <span class="mono muted">+${dois(total - naHome.length)} projetos no acervo</span>
+                            <span class="feed__more-title">Ver todos os <span class="serif">${total}</span> projetos ${SETA}</span>
+                        </a>
+                    </li>` : ''),
+    feedNomes: naHome.map((p) => `                            <span>${esc(p.nome)}</span>`).join('\n'),
+    feedMeta: naHome.map((p, i) => `                            <div${i === 0 ? ' class="is-active"' : ''} data-meta-url="${paginaProjeto(p)}" data-meta-nome="${esc(p.nome)}"><span class="mono muted">${esc((p.tags || []).join(' · '))}</span><p>${esc(p.descricao)}</p></div>`).join('\n'),
   },
 });
 
