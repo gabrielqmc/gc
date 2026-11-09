@@ -13,7 +13,7 @@ import sharp from 'sharp';
 import { chromium } from 'playwright';
 import { RAIZ, PASTA_PRINTS, lerDados, salvarDados, lerArgs, existe, caminhoVariante, encontrarProjetos, listarProjetos } from './lib.mjs';
 
-const LARGURAS = [1200, 640];
+const LARGURAS = [1200, 640, 1920]; // a primeira é a imagem principal; as outras são variantes (-640, -1920)
 const VIEWPORT = { width: 1440, height: 900 }; // 16:10, mesma proporção dos cards
 
 const args = lerArgs();
@@ -67,7 +67,7 @@ for (const projeto of alvos) {
     fs.mkdirSync(path.join(RAIZ, PASTA_PRINTS), { recursive: true });
     for (const largura of LARGURAS) {
       const destino = largura === LARGURAS[0] ? base : caminhoVariante(base, largura);
-      await sharp(png).resize({ width: largura }).webp({ quality: largura > 800 ? 78 : 75 }).toFile(path.join(RAIZ, destino));
+      await sharp(png).resize({ width: largura }).webp({ quality: largura > 1500 ? 80 : largura > 800 ? 78 : 75 }).toFile(path.join(RAIZ, destino));
     }
     projeto.imagem = base;
     projeto.capturadoEm = new Date().toISOString().slice(0, 10);

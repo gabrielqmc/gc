@@ -1,0 +1,25 @@
+    <!-- Loader (só na primeira visita da sessão) -->
+    <div class="loader" data-loader aria-hidden="true">
+        <div class="loader__top mono">
+            <span>Gabriel Capinzaiki</span>
+            <span>Portfólio ©{{ano}}</span>
+        </div>
+        <div></div>
+        <div class="loader__bottom">
+            <div class="mono loader__words"><span data-loader-word>Carregando obras digitais</span></div>
+            <div class="loader__count"><span data-loader-count>0</span></div>
+        </div>
+        <div class="loader__bar" data-loader-bar></div>
+    </div>
+
+    <!-- Cortina de transição entre páginas (borda curva em SVG) -->
+    <div class="transicao" data-transicao aria-hidden="true">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none"><path data-transicao-path d="M0 100 L0 100 Q50 100 100 100 L100 100 Z"/></svg>
+        <div class="transicao__label serif"><span data-transicao-label></span></div>
+    </div>
+
+    <!-- Cursor personalizado -->
+    <div class="cursor" data-cursor-el aria-hidden="true">
+        <div class="cursor__ball"></div>
+        <div class="cursor__label" data-cursor-text></div>
+    </div>

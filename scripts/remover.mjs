@@ -31,7 +31,7 @@ dados.projetos = dados.projetos.filter((p) => p !== projeto);
 salvarDados(dados);
 
 if (projeto.imagem) {
-  for (const arquivo of [projeto.imagem, caminhoVariante(projeto.imagem, 640)]) {
+  for (const arquivo of [projeto.imagem, caminhoVariante(projeto.imagem, 640), caminhoVariante(projeto.imagem, 1920)]) {
     const caminho = path.join(RAIZ, arquivo);
     if (fs.existsSync(caminho)) fs.rmSync(caminho);
   }
