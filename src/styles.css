@@ -592,3 +592,8 @@ html.dark .theme-btn .lua-sombra { cx: 17px; cy: 7px; }
   will-change: transform;
 }
 .sem-gl [data-gl-media].is-cor img { filter: none; }
+
+/* Vídeo de prévia: no celular aparece por cima da imagem quando o projeto está no centro */
+[data-gl-media] video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; opacity: 0; transition: opacity 0.9s var(--ease-out); pointer-events: none; }
+[data-gl-media].video-on video { opacity: 1; }
+.browser video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; background: var(--bg-2); }
