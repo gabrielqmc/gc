@@ -5,6 +5,7 @@
 //   node scripts/capturar.mjs --projeto "Maira Justo"   -> refaz print e vídeo desse (nome, slug ou link)
 //   node scripts/capturar.mjs --todos         -> refaz print e vídeo de todos os projetos
 //   node scripts/capturar.mjs --videos        -> só os vídeos que faltam (não mexe nos prints)
+//   node scripts/capturar.mjs --todos --videos -> regrava os vídeos de todos (não mexe nos prints)
 //
 // Print: WebP em 1200, 640 e 1920 px.
 // Vídeo: ~10 s, a página rola devagar até um pouco abaixo da primeira dobra e volta
@@ -24,6 +25,10 @@ import { RAIZ, PASTA_PRINTS, lerDados, salvarDados, lerArgs, existe, caminhoVari
 const LARGURAS = [1200, 640, 1920]; // a primeira é a imagem principal; as outras são variantes (-640, -1920)
 const VIEWPORT = { width: 1440, height: 900 }; // 16:10, mesma proporção dos cards
 const PASTA_VIDEOS = 'assets/video/projetos';
+// Câmera lenta da gravação: o relógio da página anda a 25% da velocidade e o vídeo
+// é acelerado 4x na montagem. Assim, mesmo numa máquina sem placa de vídeo, há
+// quadros de sobra e o resultado fica fluido, na velocidade real do site.
+const LENTIDAO = 0.25;
 
 const temFfmpeg = (() => { try { execFileSync('ffmpeg', ['-version'], { stdio: 'ignore' }); return true; } catch { return false; } })();
 if (!temFfmpeg) console.warn('⚠️  ffmpeg não encontrado: os vídeos de prévia não serão gravados.');
@@ -60,13 +65,9 @@ if (tarefas.length === 0) {
 const browser = await chromium.launch(
   process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {},
 );
-const contexto = await browser.newContext({
-  viewport: VIEWPORT,
-  deviceScaleFactor: 2,
-  locale: 'pt-BR',
-  userAgent:
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36',
-});
+const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36';
+const contexto = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: 2, locale: 'pt-BR', userAgent: USER_AGENT });
+let contextoVideo = null;
 
 let falhas = 0;
 for (const { projeto, print, video } of tarefas) {
@@ -104,7 +105,7 @@ for (const { projeto, print, video } of tarefas) {
 
     if (video) {
       const destino = `${PASTA_VIDEOS}/${projeto.slug}.mp4`;
-      await gravarVideo(pagina, path.join(RAIZ, destino));
+      await gravarVideo(projeto.url, path.join(RAIZ, destino));
       projeto.video = destino;
       const kb = Math.round(fs.statSync(path.join(RAIZ, destino)).size / 1024);
       console.log(`   🎬 ${destino}  (${kb} KB)`);
@@ -129,65 +130,146 @@ if (falhas) {
  * Grava a tela em tempo real (screencast do Chromium) enquanto a página rola
  * devagar e volta ao topo; monta um MP4 respeitando o tempo real de cada quadro.
  */
-async function gravarVideo(pagina, destino) {
+async function gravarVideo(url, destino) {
+  // Página própria em resolução normal (1440x900, sem retina): o vídeo final tem
+  // 1280x800, e desenhar em resolução dupla deixava a máquina do GitHub lenta
+  // demais para registrar todos os quadros nos sites mais pesados.
+  if (!contextoVideo) {
+    contextoVideo = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: 1, locale: 'pt-BR', userAgent: USER_AGENT });
+    // Desacelera os relógios e timers da página (rolagem suave, GSAP, carrosséis...).
+    // Os quadros de animação (requestAnimationFrame) e o CSS são desacelerados pelo
+    // próprio Chromium (Animation.setPlaybackRate), no mesmo ritmo e alinhados com
+    // este performance.now.
+    await contextoVideo.addInitScript((K) => {
+      const d0 = Date.now();
+      const agoraReal = performance.now.bind(performance);
+      const dataReal = Date.now;
+      performance.now = () => agoraReal() * K;
+      Date.now = () => d0 + (dataReal() - d0) * K;
+      const stReal = window.setTimeout;
+      const siReal = window.setInterval;
+      window.setTimeout = (fn, ms, ...a) => stReal(fn, (ms || 0) / K, ...a);
+      window.setInterval = (fn, ms, ...a) => siReal(fn, (ms || 0) / K, ...a);
+    }, LENTIDAO);
+  }
+  const pagina = await contextoVideo.newPage();
+  const cdp = await contextoVideo.newCDPSession(pagina);
+  await cdp.send('Animation.enable');
+  await cdp.send('Animation.setPlaybackRate', { playbackRate: LENTIDAO });
+  try {
+    await abrir(pagina, url);
+    await prepararPagina(pagina);
+    await pagina.waitForTimeout(4000);  // em câmera lenta, as animações de entrada levam mais tempo
+    await gravarTela(pagina, cdp, destino);
+  } finally {
+    await pagina.close();
+  }
+}
+
+async function gravarTela(pagina, cdp, destino) {
   const pastaQuadros = fs.mkdtempSync(path.join(os.tmpdir(), 'quadros-'));
-  const cdp = await pagina.context().newCDPSession(pagina);
+  const espera = (ms) => pagina.waitForTimeout(ms / LENTIDAO);  // ms no tempo da página
   const quadros = [];
   cdp.on('Page.screencastFrame', (f) => {
     quadros.push({ data: f.data, t: f.metadata.timestamp });
     cdp.send('Page.screencastFrameAck', { sessionId: f.sessionId }).catch(() => {});
   });
-  await pagina.evaluate(() => window.scrollTo(0, 0));
-  await pagina.waitForTimeout(400);
-  await cdp.send('Page.startScreencast', { format: 'jpeg', quality: 90, maxWidth: 1440, maxHeight: 900, everyNthFrame: 1 });
+  await pagina.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await pagina.mouse.move(VIEWPORT.width / 2, VIEWPORT.height / 2);
+  await pagina.waitForTimeout(600);
+  const alvo = await pagina.evaluate(() => Math.max(0, Math.min(
+    document.documentElement.scrollHeight - window.innerHeight,
+    window.innerHeight * 1.6,
+  )));
+  await cdp.send('Page.startScreencast', { format: 'jpeg', quality: 88, maxWidth: 1440, maxHeight: 900, everyNthFrame: 1 });
 
-  // Roteiro: pausa no topo, desce ~1,6 tela com aceleração suave, pausa, volta ao topo.
-  await pagina.evaluate(async () => {
-    const espera = (ms) => new Promise((r) => setTimeout(r, ms));
-    const suave = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-    const rolar = (de, ate, ms) => new Promise((res) => {
-      const inicio = performance.now();
-      const passo = (agora) => {
-        const u = Math.min(1, (agora - inicio) / ms);
-        window.scrollTo(0, de + (ate - de) * suave(u));
-        if (u < 1) requestAnimationFrame(passo); else res();
-      };
-      requestAnimationFrame(passo);
-    });
-    const alvo = Math.max(0, Math.min(document.documentElement.scrollHeight - window.innerHeight, window.innerHeight * 1.6));
-    await espera(1200);
-    await rolar(0, alvo, 3600);
-    await espera(1000);
-    await rolar(alvo, 0, 2800);
-    await espera(900);
-  });
+  // Roteiro: pausa no topo, desce ~1,6 tela, pausa, volta ao topo.
+  // A rolagem é feita com a roda do mouse, em pequenos passos contínuos (acelera e
+  // desacelera), como uma pessoa rolando: assim sites com rolagem suave própria
+  // (Lenis, scroll-behavior: smooth etc.) se movem do jeito que se movem para um visitante.
+  // (as durações abaixo estão no tempo da página, que corre em câmera lenta)
+  await espera(1200);
+  await rolarComRoda(pagina, alvo, 3800);
+  await espera(1300);
+  await rolarComRoda(pagina, -alvo, 3200);
+  await espera(1200);
+  // Garante que termina exatamente no topo (o loop do vídeo fica contínuo)
+  if (await pagina.evaluate(() => window.scrollY > 2)) {
+    await rolarComRoda(pagina, -(await pagina.evaluate(() => window.scrollY)) - 40, 500);
+    await espera(700);
+  }
   await cdp.send('Page.stopScreencast');
-  await cdp.detach().catch(() => {});
 
   if (quadros.length < 2) throw new Error('nenhum quadro gravado para o vídeo');
 
-  // Lista do ffmpeg com a duração real de cada quadro
-  const linhas = [];
-  quadros.forEach((q, i) => {
-    const arquivo = path.join(pastaQuadros, `q${String(i).padStart(5, '0')}.jpg`);
-    fs.writeFileSync(arquivo, Buffer.from(q.data, 'base64'));
-    const dur = i < quadros.length - 1 ? Math.max(0.001, quadros[i + 1].t - q.t) : 0.4;
-    linhas.push(`file '${arquivo}'`, `duration ${dur.toFixed(4)}`);
-  });
-  linhas.push(`file '${path.join(pastaQuadros, `q${String(quadros.length - 1).padStart(5, '0')}.jpg`)}'`);
-  const lista = path.join(pastaQuadros, 'lista.txt');
-  fs.writeFileSync(lista, linhas.join('\n'));
+  // Monta a sequência final a 30 quadros/s: para cada instante do vídeo (já
+  // acelerado de volta, x LENTIDAO), usa o quadro capturado mais recente. Fazer
+  // isso aqui evita a conversão de ritmo do ffmpeg, que repetia 1 quadro a cada 6.
+  const FPS = 30;
+  const t0 = quadros[0].t;
+  const tempoVideo = (q) => (q.t - t0) * LENTIDAO;
+  const duracao = tempoVideo(quadros[quadros.length - 1]) + 0.3;
+  const total = Math.round(duracao * FPS);
+  let j = 0;
+  for (let n = 0; n < total; n++) {
+    const t = n / FPS;
+    while (j + 1 < quadros.length && tempoVideo(quadros[j + 1]) <= t) j++;
+    fs.writeFileSync(path.join(pastaQuadros, `v${String(n).padStart(5, '0')}.jpg`), Buffer.from(quadros[j].data, 'base64'));
+  }
 
   fs.mkdirSync(path.dirname(destino), { recursive: true });
   execFileSync('ffmpeg', [
     '-y', '-loglevel', 'error',
-    '-f', 'concat', '-safe', '0', '-i', lista,
-    '-vf', 'fps=30,scale=1280:-2:flags=lanczos,format=yuv420p',
+    '-framerate', String(FPS), '-i', path.join(pastaQuadros, 'v%05d.jpg'),
+    '-vf', 'scale=1280:-2:flags=lanczos,format=yuv420p',
     '-c:v', 'libx264', '-preset', 'slow', '-crf', '26', '-profile:v', 'high',
     '-movflags', '+faststart', '-an',
     destino,
   ]);
-  fs.rmSync(pastaQuadros, { recursive: true, force: true });
+  if (process.env.MANTER_QUADROS) console.log(`   quadros mantidos em ${pastaQuadros}`);
+  else fs.rmSync(pastaQuadros, { recursive: true, force: true });
+}
+
+/**
+ * Rola `distancia` px ao longo de `ms`, seguindo uma curva suave (acelera e
+ * desacelera), com um pequeno passo a cada quadro, dentro da própria página:
+ * - cada passo é enviado como um evento de roda do mouse; se o site usa uma
+ *   biblioteca de rolagem suave (Lenis, Locomotive...), ela trata o evento e
+ *   anima do jeito dela, como faria com um visitante;
+ * - se ninguém tratar o evento, a página é rolada diretamente.
+ * A rolagem suave do CSS (scroll-behavior: smooth) é desligada só durante a
+ * gravação, porque ela transforma cada passo numa animação própria e faz a
+ * página “pular”.
+ */
+async function rolarComRoda(pagina, distancia, ms) {
+  await pagina.evaluate(async ([dist, duracao]) => {
+    if (!document.getElementById('__sem-rolagem-suave')) {
+      const st = document.createElement('style');
+      st.id = '__sem-rolagem-suave';
+      st.textContent = 'html, body { scroll-behavior: auto !important; }';
+      document.head.appendChild(st);
+    }
+    const suave = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+    await new Promise((resolve) => {
+      const inicio = performance.now();
+      let enviado = 0;
+      const quadro = (agora) => {
+        const u = Math.min(1, (agora - inicio) / duracao);
+        const passo = dist * suave(u) - enviado;
+        enviado += passo;
+        if (passo) {
+          const x = window.innerWidth / 2;
+          const y = window.innerHeight / 2;
+          const alvo = document.elementFromPoint(x, y) || document.body;
+          const evento = new WheelEvent('wheel', { deltaY: passo, deltaMode: 0, clientX: x, clientY: y, bubbles: true, cancelable: true });
+          const ninguemTratou = alvo.dispatchEvent(evento);
+          if (ninguemTratou) window.scrollBy(0, passo);
+        }
+        if (u < 1) requestAnimationFrame(quadro); else resolve();
+      };
+      requestAnimationFrame(quadro);
+    });
+  }, [distancia, ms]);
 }
 
 async function abrir(pagina, url) {

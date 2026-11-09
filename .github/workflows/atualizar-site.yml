@@ -18,6 +18,11 @@ on:
         required: false
         type: boolean
         default: false
+      refazer_videos:
+        description: "Regravar só os VÍDEOS de todos os projetos (sem mexer nos prints)?"
+        required: false
+        type: boolean
+        default: false
       projeto:
         description: "Ou refazer print e vídeo de UM projeto (nome, slug ou link)"
         required: false
@@ -51,10 +56,13 @@ jobs:
       - name: Tirar prints
         env:
           REFAZER_TODOS: ${{ inputs.refazer_prints }}
+          REFAZER_VIDEOS: ${{ inputs.refazer_videos }}
           PROJETO: ${{ inputs.projeto }}
         run: |
           if [ "$REFAZER_TODOS" = "true" ]; then
             node scripts/capturar.mjs --todos
+          elif [ "$REFAZER_VIDEOS" = "true" ]; then
+            node scripts/capturar.mjs --todos --videos
           elif [ -n "$PROJETO" ]; then
             node scripts/capturar.mjs --projeto "$PROJETO"
           else
