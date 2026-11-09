@@ -1,6 +1,6 @@
 {
   "site": {
-    "url": "",
+    "url": "https://web.capinzaiki.com.br",
     "whatsapp": "5514997464443",
     "mensagemWhatsapp": "Olá, tenho interesse em desenvolver um site para o meu negócio!",
     "mensagemWhatsappPortfolio": "Olá, vi seu portfólio completo e gostaria de um orçamento!",
@@ -12,7 +12,10 @@
       "nome": "Dra. Gerlany Melo",
       "url": "https://gerlanymelo.vercel.app/",
       "descricao": "Design sofisticado focado em transmitir segurança, beleza natural e conversão em agendamentos de tratamentos faciais.",
-      "tags": ["Estética", "Website"],
+      "tags": [
+        "Estética",
+        "Website"
+      ],
       "destaque": true,
       "imagem": "assets/img/projetos/gerlany-melo.webp"
     },
@@ -21,7 +24,9 @@
       "nome": "Maira Justo",
       "url": "https://mairajusto.vercel.app/",
       "descricao": "Plataforma desenvolvida para transmitir acolhimento e profissionalismo, facilitando o agendamento de consultas e destacando serviços especializados.",
-      "tags": ["Estética & Doula"],
+      "tags": [
+        "Estética & Doula"
+      ],
       "destaque": true,
       "imagem": "assets/img/projetos/maira-justo.webp"
     },
@@ -30,7 +35,9 @@
       "nome": "Guilherme Chiarato",
       "url": "https://guihermechiarato.vercel.app/",
       "descricao": "Design focado em transmitir seriedade e transparência. Plataforma desenvolvida para destacar a atuação jurídica e captar clientes em meio digital.",
-      "tags": ["Advocacia"],
+      "tags": [
+        "Advocacia"
+      ],
       "destaque": false,
       "imagem": "assets/img/projetos/guilherme-chiarato.webp"
     },
@@ -39,15 +46,24 @@
       "nome": "Banda Untold",
       "url": "https://www.bandauntold.com/",
       "descricao": "Presença digital imersiva que reflete a identidade musical da banda, reunindo galeria, agenda de shows e material para contratantes.",
-      "tags": ["Música"],
+      "tags": [
+        "Música"
+      ],
       "destaque": false,
       "imagem": "assets/img/projetos/banda-untold.webp"
+    },
+    {
+      "slug": "capinzaiki-imobiliaria",
+      "nome": "Capinzaiki Imobiliária",
+      "url": "https://www.capinzaiki.com.br/",
+      "descricao": "Site imobiliário com busca de imóveis por tipo de negócio, valor e cidade, vitrine de imóveis e contato direto pelo WhatsApp.",
+      "tags": [
+        "Imobiliária",
+        "Website"
+      ],
+      "destaque": false,
+      "imagem": "assets/img/projetos/capinzaiki-imobiliaria.webp"
     }
   ],
-  "galeria": [
-    {
-      "imagem": "assets/img/galeria/capinzaiki-imoveis.webp",
-      "alt": "Site da imobiliária Capinzaiki"
-    }
-  ]
+  "galeria": []
 }

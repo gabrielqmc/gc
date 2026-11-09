@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /foga.html
+
+Sitemap: https://web.capinzaiki.com.br/sitemap.xml
