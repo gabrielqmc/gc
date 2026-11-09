@@ -61,13 +61,9 @@ if (tarefas.length === 0) {
 const browser = await chromium.launch(
   process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {},
 );
-const contexto = await browser.newContext({
-  viewport: VIEWPORT,
-  deviceScaleFactor: 2,
-  locale: 'pt-BR',
-  userAgent:
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36',
-});
+const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36';
+const contexto = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: 2, locale: 'pt-BR', userAgent: USER_AGENT });
+let contextoVideo = null;
 
 let falhas = 0;
 for (const { projeto, print, video } of tarefas) {
@@ -105,7 +101,7 @@ for (const { projeto, print, video } of tarefas) {
 
     if (video) {
       const destino = `${PASTA_VIDEOS}/${projeto.slug}.mp4`;
-      await gravarVideo(pagina, path.join(RAIZ, destino));
+      await gravarVideo(projeto.url, path.join(RAIZ, destino));
       projeto.video = destino;
       const kb = Math.round(fs.statSync(path.join(RAIZ, destino)).size / 1024);
       console.log(`   🎬 ${destino}  (${kb} KB)`);
@@ -130,7 +126,24 @@ if (falhas) {
  * Grava a tela em tempo real (screencast do Chromium) enquanto a página rola
  * devagar e volta ao topo; monta um MP4 respeitando o tempo real de cada quadro.
  */
-async function gravarVideo(pagina, destino) {
+async function gravarVideo(url, destino) {
+  // Página própria em resolução normal (1440x900, sem retina): o vídeo final tem
+  // 1280x800, e desenhar em resolução dupla deixava a máquina do GitHub lenta
+  // demais para registrar todos os quadros nos sites mais pesados.
+  if (!contextoVideo) {
+    contextoVideo = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: 1, locale: 'pt-BR', userAgent: USER_AGENT });
+  }
+  const pagina = await contextoVideo.newPage();
+  try {
+    await abrir(pagina, url);
+    await prepararPagina(pagina);
+    await gravarTela(pagina, destino);
+  } finally {
+    await pagina.close();
+  }
+}
+
+async function gravarTela(pagina, destino) {
   const pastaQuadros = fs.mkdtempSync(path.join(os.tmpdir(), 'quadros-'));
   const cdp = await pagina.context().newCDPSession(pagina);
   const quadros = [];
@@ -145,7 +158,7 @@ async function gravarVideo(pagina, destino) {
     document.documentElement.scrollHeight - window.innerHeight,
     window.innerHeight * 1.6,
   )));
-  await cdp.send('Page.startScreencast', { format: 'jpeg', quality: 90, maxWidth: 1440, maxHeight: 900, everyNthFrame: 1 });
+  await cdp.send('Page.startScreencast', { format: 'jpeg', quality: 88, maxWidth: 1440, maxHeight: 900, everyNthFrame: 1 });
 
   // Roteiro: pausa no topo, desce ~1,6 tela, pausa, volta ao topo.
   // A rolagem é feita com a roda do mouse, em pequenos passos contínuos (acelera e
