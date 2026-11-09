@@ -30,7 +30,8 @@
         "Estética & Doula"
       ],
       "destaque": true,
-      "imagem": "assets/img/projetos/maira-justo.webp"
+      "imagem": "assets/img/projetos/maira-justo.webp",
+      "video": "assets/video/projetos/maira-justo.mp4"
     },
     {
       "slug": "guilherme-chiarato",
@@ -41,7 +42,8 @@
         "Advocacia"
       ],
       "destaque": false,
-      "imagem": "assets/img/projetos/guilherme-chiarato.webp"
+      "imagem": "assets/img/projetos/guilherme-chiarato.webp",
+      "video": "assets/video/projetos/guilherme-chiarato.mp4"
     },
     {
       "slug": "banda-untold",
@@ -52,7 +54,8 @@
         "Música"
       ],
       "destaque": false,
-      "imagem": "assets/img/projetos/banda-untold.webp"
+      "imagem": "assets/img/projetos/banda-untold.webp",
+      "video": "assets/video/projetos/banda-untold.mp4"
     },
     {
       "slug": "capinzaiki-imobiliaria",
@@ -65,7 +68,8 @@
       ],
       "destaque": false,
       "imagem": "assets/img/projetos/capinzaiki-imobiliaria.webp",
-      "capturadoEm": "2026-11-09"
+      "capturadoEm": "2026-11-09",
+      "video": "assets/video/projetos/capinzaiki-imobiliaria.mp4"
     }
   ],
   "galeria": []
