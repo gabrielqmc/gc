@@ -109,7 +109,39 @@ async function prepararPagina(pagina) {
     window.scrollTo(0, 0);
   });
   await pagina.waitForTimeout(2500);
+  await fecharAvisoDeCookies(pagina);
   await pagina.evaluate(() => document.fonts && document.fonts.ready);
+}
+
+async function fecharAvisoDeCookies(pagina) {
+  // 1) Tenta clicar no botão de aceitar do aviso de cookies/LGPD.
+  const textoAceitar = /^\s*(aceitar( todos( os cookies)?)?|aceito|concordo|entendi|ok|permitir( todos)?|accept( all)?|allow all|got it|i agree)\s*$/i;
+  const botoes = pagina.locator('button, a, [role="button"]').filter({ hasText: textoAceitar });
+  const total = await botoes.count();
+  for (let i = 0; i < total; i++) {
+    const botao = botoes.nth(i);
+    const ehDeCookie = await botao.evaluate((el) => {
+      for (let n = el; n && n !== document.body; n = n.parentElement) {
+        if (/cookie|lgpd|privacidade|privacy|consent/i.test(n.textContent || '') && n.textContent.length < 2000) return true;
+      }
+      return false;
+    }).catch(() => false);
+    if (ehDeCookie && (await botao.isVisible().catch(() => false))) {
+      await botao.click({ timeout: 3000 }).catch(() => {});
+      await pagina.waitForTimeout(800);
+      break;
+    }
+  }
+
+  // 2) Se ainda sobrou algum aviso fixo na tela falando de cookies, esconde.
+  await pagina.evaluate(() => {
+    for (const el of document.querySelectorAll('body *')) {
+      const estilo = getComputedStyle(el);
+      if (!['fixed', 'sticky'].includes(estilo.position)) continue;
+      const texto = el.textContent || '';
+      if (/cookie|lgpd|consentimento|consent/i.test(texto) && texto.length < 2000) el.style.setProperty('display', 'none', 'important');
+    }
+  });
 }
 
 function limparTitulo(titulo) {
