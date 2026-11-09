@@ -11,13 +11,14 @@
       "slug": "gerlany-melo",
       "nome": "Dra. Gerlany Melo",
       "url": "https://gerlanymelo.vercel.app/",
-      "descricao": "Design sofisticado focado em transmitir segurança, beleza natural e conversão em agendamentos de tratamentos faciais.",
+      "descricao": "Site sofisticado para a biomédica especialista em Estética Avançada e Botox Estratégico em Fortaleza, com método, tratamentos, depoimentos e agendamento de avaliações pelo WhatsApp.",
       "tags": [
         "Estética",
         "Website"
       ],
       "destaque": true,
-      "imagem": "assets/img/projetos/gerlany-melo.webp"
+      "imagem": "assets/img/projetos/gerlany-melo.webp",
+      "capturadoEm": "2026-11-09"
     },
     {
       "slug": "maira-justo",

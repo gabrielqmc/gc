@@ -59,6 +59,9 @@ for (const projeto of alvos) {
         descricao: m('meta[name="description"]') || m('meta[property="og:description"]'),
       };
     });
+    // Registra no log o que o site diz sobre si, para conferir se o card precisa de ajuste
+    console.log(`   título do site: ${meta.titulo || '(vazio)'}`);
+    console.log(`   descrição do site: ${meta.descricao || '(vazia)'}`);
     if (!projeto.nome) projeto.nome = limparTitulo(meta.titulo) || new URL(projeto.url).hostname;
     if (!projeto.descricao) projeto.descricao = meta.descricao;
 
