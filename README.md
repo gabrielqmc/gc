@@ -45,7 +45,6 @@ Edite o `projetos.json` (dá para fazer direto pelo GitHub, no ícone de lápis)
 
 - **Ordem**: os cards aparecem na ordem da lista (os novos entram no topo).
 - **`destaque: true`**: aparece na página inicial (no máximo `site.maxDestaques`).
-- **`galeria`**: imagens extras que entram apenas no carrossel do topo.
 - **`site.url`**: domínio do site (ex.: `https://gabrielcapinzaiki.com.br`). Ele é necessário para a prévia no WhatsApp e no LinkedIn e para gerar `sitemap.xml` e `robots.txt`.
 
 Ao salvar, o workflow **"Atualizar site"** gera as páginas novamente sozinho.
@@ -84,9 +83,11 @@ npm run gerar
 projetos.json            dados dos projetos (é aqui que você mexe)
 src/index.html           modelo da página inicial
 src/projetos.html        modelo da página de projetos
+src/projeto.html         modelo da página de cada projeto (gera trabalhos/<slug>.html)
 src/partials/            head, header (com menu mobile) e footer compartilhados
 src/styles.css           estilos (Tailwind)
 scripts/                 adicionar, remover, capturar (print) e build (gerar páginas)
-assets/                  CSS gerado e imagens otimizadas
+assets/js/main.js        animações e interações (GSAP, ScrollTrigger, Lenis e WebGL)
+assets/                  CSS gerado, bibliotecas (assets/js/vendor) e imagens otimizadas
 .github/workflows/       automações do GitHub Actions
 ```

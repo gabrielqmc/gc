@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <!-- ARQUIVO GERADO AUTOMATICAMENTE (npm run gerar). Edite src/ e projetos.json, não este arquivo. -->
-<html lang="pt-BR" class="scroll-smooth">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Todos os Projetos | Gabriel Capinzaiki</title>
+    <meta name="theme-color" content="#111110">
 
     <!-- SEO Básico -->
     <meta name="description" content="Explore o portfólio completo de Gabriel Capinzaiki. Sites estratégicos e de alta conversão para clínicas, advogados, músicos e diversos negócios.">
@@ -31,233 +32,238 @@
     <meta name="twitter:image" content="https://web.capinzaiki.com.br/assets/img/og.jpg">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FDFBF7'/><text x='50' y='72' font-family='sans-serif' font-weight='bold' font-size='55' text-anchor='middle' fill='%231A3626'>GC<tspan fill='%23A3B899'>.</tspan></text></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23111110'/><text x='50' y='68' font-family='sans-serif' font-weight='600' font-size='46' text-anchor='middle' fill='%23EEEDE9'>GC<tspan fill='%23A3B899'>.</tspan></text></svg>">
 
-    <!-- Fontes: Space Grotesk (títulos) e Outfit (textos) -->
+    <!-- Fontes: Geist (texto e títulos), Geist Mono (legendas), Instrument Serif (contraste editorial) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 
-    <!-- Ícones (Phosphor, versão fixa, só o peso "regular") -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=86568a45">
 
-    <!-- CSS gerado pelo Tailwind (npm run build) -->
-    <link rel="stylesheet" href="assets/css/style.css?v=920aef86">
+    <script>
+        // Marca que o JS está ativo (os estados iniciais das animações dependem disso).
+        // Se o script principal não carregar em 6s, mostra o conteúdo mesmo assim.
+        (function (d) {
+            var h = d.documentElement;
+            h.classList.add('js');
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) h.classList.add('reduced');
+            setTimeout(function () { if (!window.__gcPronto) { h.classList.remove('js'); h.classList.add('reduced'); } }, 6000);
+        })(document);
+    </script>
 </head>
-<body class="antialiased selection:bg-green-light selection:text-cream">
+<body data-page="projetos">
 
-    <header class="fixed w-full top-0 z-50 bg-cream/90 backdrop-blur-md border-b border-green-accent/30 transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-6 lg:px-12 py-5 flex justify-between items-center">
-            <a href="index.html" class="font-heading font-bold text-xl tracking-tight text-green relative group" aria-label="Gabriel Capinzaiki - início">
-                GC<span class="text-green-accent">.</span>
-                <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green transition-all group-hover:w-full"></span>
-            </a>
+    <!-- Loader (só na primeira visita da sessão) -->
+    <div class="loader" data-loader aria-hidden="true">
+        <div class="loader__top mono">
+            <span>Gabriel Capinzaiki</span>
+            <span>Portfólio ©2026</span>
+        </div>
+        <div></div>
+        <div class="loader__bottom">
+            <div class="mono loader__words"><span data-loader-word>Carregando obras digitais</span></div>
+            <div class="loader__count"><span data-loader-count>0</span></div>
+        </div>
+        <div class="loader__bar" data-loader-bar></div>
+    </div>
 
-            <nav class="hidden md:flex items-center gap-8 font-medium text-sm tracking-wide" aria-label="Menu principal">
-                <a href="index.html#servicos" class="hover:text-green-light transition-colors">Serviços</a>
-                <a href="index.html#processo" class="hover:text-green-light transition-colors">Como funciona</a>
-                <a href="projetos.html" class="hover:text-green-light transition-colors">Projetos</a>
-                <a href="https://wa.me/5514997464443?text=Ol%C3%A1%2C%20tenho%20interesse%20em%20desenvolver%20um%20site%20para%20o%20meu%20neg%C3%B3cio!" target="_blank" rel="noopener" class="px-5 py-2.5 bg-green text-cream rounded-full hover:bg-green-light transition-colors duration-300 shadow-lg shadow-green/20">
-                    Iniciar Projeto
-                </a>
-            </nav>
+    <!-- Cortina de transição entre páginas -->
+    <div class="transicao" data-transicao aria-hidden="true">
+        <div class="transicao__label serif"><span data-transicao-label></span></div>
+    </div>
 
-            <!-- Botão do menu mobile -->
-            <button id="menu-toggle" type="button" class="md:hidden text-green text-2xl w-11 h-11 -mr-2 flex items-center justify-center rounded-full hover:bg-green/5" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu-mobile">
-                <i class="ph ph-list" aria-hidden="true"></i>
-            </button>
+    <!-- Cursor personalizado -->
+    <div class="cursor" data-cursor-el aria-hidden="true">
+        <div class="cursor__ball"></div>
+        <div class="cursor__label" data-cursor-text></div>
+    </div>
+    <div class="progress" aria-hidden="true"></div>
+
+    <header class="site-header" data-header>
+        <a href="index.html" class="brand" aria-label="Gabriel Capinzaiki - início" data-cursor="link">
+            <span class="roll">Gabriel Capinzaiki</span>
+            <small>Web Designer</small>
+        </a>
+
+        <div class="header-clock mono" aria-hidden="true">
+            <span>Brasil</span>
+            <span class="tabular" data-clock>--:--:--</span>
         </div>
 
-        <!-- Menu mobile -->
-        <nav id="menu-mobile" class="md:hidden hidden border-t border-green-accent/30 bg-cream" aria-label="Menu mobile">
-            <div class="px-6 py-6 flex flex-col gap-1 font-medium text-lg">
-                <a href="index.html#servicos" class="py-3 border-b border-green-accent/20">Serviços</a>
-                <a href="index.html#processo" class="py-3 border-b border-green-accent/20">Como funciona</a>
-                <a href="projetos.html" class="py-3 border-b border-green-accent/20">Projetos</a>
-                <a href="https://wa.me/5514997464443?text=Ol%C3%A1%2C%20tenho%20interesse%20em%20desenvolver%20um%20site%20para%20o%20meu%20neg%C3%B3cio!" target="_blank" rel="noopener" class="mt-4 px-6 py-4 bg-green text-cream rounded-full text-center">
-                    Iniciar Projeto
-                </a>
-            </div>
+        <nav class="nav" aria-label="Menu principal">
+            <a href="projetos.html" data-transition="Projetos"><span class="roll">Projetos</span><sup>05</sup></a>
+            <a href="index.html#servicos"><span class="roll">Serviços</span></a>
+            <a href="index.html#processo"><span class="roll">Como funciona</span></a>
+            <a href="https://wa.me/5514997464443?text=Ol%C3%A1%2C%20tenho%20interesse%20em%20desenvolver%20um%20site%20para%20o%20meu%20neg%C3%B3cio!" target="_blank" rel="noopener" class="btn magnetic" data-cursor="link"><span class="magnetic-in"><span class="roll">Iniciar Projeto</span></span></a>
         </nav>
+
+        <button type="button" class="menu-btn" data-menu-toggle aria-expanded="false" aria-controls="menu">
+            <span data-menu-label>Menu</span>
+            <span class="menu-btn__icon" aria-hidden="true"></span>
+        </button>
     </header>
 
-    <main>
-        <section class="pt-40 pb-16 px-6 lg:px-12 max-w-7xl mx-auto text-center">
-            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cream-100 border border-green-accent/40 text-sm font-medium mb-6">
-                <i class="ph ph-folder-open text-green-light" aria-hidden="true"></i>
-                Meu Acervo
+    <!-- Menu mobile -->
+    <nav id="menu" class="menu" aria-label="Menu mobile" data-menu>
+        <div class="menu__links">
+            <a href="index.html" data-transition="Início"><span class="mono">01</span><span>Início</span></a>
+            <a href="projetos.html" data-transition="Projetos"><span class="mono">02</span><span>Projetos</span></a>
+            <a href="index.html#servicos"><span class="mono">03</span><span>Serviços</span></a>
+            <a href="index.html#processo"><span class="mono">04</span><span>Como funciona</span></a>
+            <a href="https://wa.me/5514997464443?text=Ol%C3%A1%2C%20tenho%20interesse%20em%20desenvolver%20um%20site%20para%20o%20meu%20neg%C3%B3cio!" target="_blank" rel="noopener"><span class="mono">05</span><span class="serif">Iniciar Projeto</span></a>
+        </div>
+        <div class="menu__foot mono">
+            <div style="display:flex;flex-direction:column;gap:6px">
+                <a href="https://www.instagram.com/gabrielqmc/" target="_blank" rel="noopener">Instagram</a>
+                <a href="https://www.linkedin.com/in/gabrielqueirozmc/" target="_blank" rel="noopener">LinkedIn</a>
+                <a href="https://www.behance.net/gabrielqueirozm" target="_blank" rel="noopener">Behance</a>
             </div>
-            <h1 class="text-5xl lg:text-7xl font-bold font-heading mb-6 text-green">Todos os <span class="text-green-light">Projetos</span></h1>
-            <p class="text-lg lg:text-xl text-green/70 max-w-2xl mx-auto">
-                Explore a galeria completa dos sites estratégicos que desenvolvi. Cada detalhe foi pensado para atrair, engajar e converter.
-            </p>
+            <span class="tabular" data-clock>--:--:--</span>
+        </div>
+    </nav>
+
+    <div class="section-indicator mono" aria-hidden="true">
+        <span class="tabular" data-indicator-num>01</span>
+        <span>—</span>
+        <span class="section-indicator__name"><span data-indicator-name>Início</span></span>
+    </div>
+
+    <main>
+        <section class="page-intro wrap" data-section="Acervo">
+            <h1 class="page-intro__title">
+                <span data-split="chars" style="display:block">Todos os</span>
+                <span data-split="chars" class="serif" style="display:block;text-align:right">Projetos</span>
+            </h1>
+            <div class="page-intro__row">
+                <div class="page-intro__label mono muted" data-reveal="fade"><span>( Meu Acervo )</span><span class="tabular">05</span></div>
+                <p class="page-intro__text" data-reveal="up">
+                    Explore a galeria completa dos sites estratégicos que desenvolvi. Cada detalhe foi pensado para atrair, engajar e converter.
+                </p>
+            </div>
         </section>
 
-        <section class="py-12 pb-32 bg-cream-100 rounded-t-[3rem] lg:rounded-t-[5rem]">
-            <div class="max-w-7xl mx-auto px-6 lg:px-12 pt-16">
-                <!-- Grid de projetos (gerado automaticamente a partir de projetos.json) -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-                    <!-- Projeto: Dra. Gerlany Melo -->
-                    <a href="https://gerlanymelo.vercel.app/" target="_blank" rel="noopener noreferrer" class="group project-card block bg-cream rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-shadow duration-500 border border-green-accent/10">
-                        <div class="relative w-full aspect-[16/10] overflow-hidden bg-green">
-                            <img src="assets/img/projetos/gerlany-melo.webp" srcset="assets/img/projetos/gerlany-melo-640.webp 640w, assets/img/projetos/gerlany-melo.webp 1200w" sizes="(min-width: 1280px) 600px, (min-width: 768px) 50vw, 100vw" width="1200" height="750" loading="lazy" decoding="async" alt="Página inicial do site Dra. Gerlany Melo" class="w-full h-full object-cover object-top opacity-90 project-image transition-transform duration-700 ease-out">
-                            <div class="absolute inset-0 bg-green/10 group-hover:bg-transparent transition-colors duration-500"></div>
-                            <div class="absolute top-4 left-4 flex flex-wrap gap-2">
-                                <span class="bg-cream/90 backdrop-blur text-green text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">Estética</span>
-                                <span class="bg-cream/90 backdrop-blur text-green text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">Website</span>
-                            </div>
-                            <div class="absolute inset-0 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <div class="bg-cream text-green w-16 h-16 rounded-full flex items-center justify-center shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                    <i class="ph ph-arrow-up-right text-2xl" aria-hidden="true"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-8">
-                            <h3 class="text-2xl font-bold font-heading mb-3 text-green group-hover:text-green-light transition-colors">Dra. Gerlany Melo</h3>
-                            <p class="text-green/70 mb-6 line-clamp-2">Design sofisticado focado em transmitir segurança, beleza natural e conversão em agendamentos de tratamentos faciais.</p>
-                            <div class="flex items-center text-sm font-semibold text-green-light uppercase tracking-wider gap-2">
-                                Acessar site <i class="ph ph-arrow-right" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                    </a>
+        <section class="wrap" style="padding-bottom: clamp(110px, 14vw, 220px)" data-section="Projetos">
+            <div class="filters" role="group" aria-label="Filtrar projetos por segmento" data-filters data-reveal="fade">
+                <button type="button" class="filter is-active" data-filter="*" aria-pressed="true">Todos<sup>05</sup></button>
+                <button type="button" class="filter" data-filter="Estética" aria-pressed="false">Estética<sup>01</sup></button>
+                <button type="button" class="filter" data-filter="Website" aria-pressed="false">Website<sup>02</sup></button>
+                <button type="button" class="filter" data-filter="Estética &amp; Doula" aria-pressed="false">Estética &amp; Doula<sup>01</sup></button>
+                <button type="button" class="filter" data-filter="Advocacia" aria-pressed="false">Advocacia<sup>01</sup></button>
+                <button type="button" class="filter" data-filter="Música" aria-pressed="false">Música<sup>01</sup></button>
+                <button type="button" class="filter" data-filter="Imobiliária" aria-pressed="false">Imobiliária<sup>01</sup></button>
+            </div>
+            <div class="showcase" data-works>
+                <a href="trabalhos/gerlany-melo.html" class="work" data-work data-tags="Estética|Website" data-transition="Dra. Gerlany Melo" data-cursor-label="Ver projeto">
+                    <div class="work__media" data-tilt>
+                        <div class="work__frame"><img data-parallax src="assets/img/projetos/gerlany-melo.webp" srcset="assets/img/projetos/gerlany-melo-640.webp 640w, assets/img/projetos/gerlany-melo.webp 1200w, assets/img/projetos/gerlany-melo-1920.webp 1920w" sizes="(min-width: 860px) 60vw, 100vw" width="1200" height="750" loading="lazy" decoding="async" alt="Página inicial do site Dra. Gerlany Melo"></div>
+                    </div>
+                    <div class="work__cap">
+                        <span class="work__num mono muted tabular">01</span>
+                        <span class="work__name">Dra. Gerlany Melo</span>
+                        <span class="work__tags mono muted">Estética · Website</span>
+                        <p class="work__desc">Design sofisticado focado em transmitir segurança, beleza natural e conversão em agendamentos de tratamentos faciais.</p>
+                    </div>
+                </a>
+                <a href="trabalhos/maira-justo.html" class="work" data-work data-tags="Estética &amp; Doula" data-transition="Maira Justo" data-cursor-label="Ver projeto">
+                    <div class="work__media" data-tilt>
+                        <div class="work__frame"><img data-parallax src="assets/img/projetos/maira-justo.webp" srcset="assets/img/projetos/maira-justo-640.webp 640w, assets/img/projetos/maira-justo.webp 1200w, assets/img/projetos/maira-justo-1920.webp 1920w" sizes="(min-width: 860px) 60vw, 100vw" width="1200" height="750" loading="lazy" decoding="async" alt="Página inicial do site Maira Justo"></div>
+                    </div>
+                    <div class="work__cap">
+                        <span class="work__num mono muted tabular">02</span>
+                        <span class="work__name">Maira Justo</span>
+                        <span class="work__tags mono muted">Estética &amp; Doula</span>
+                        <p class="work__desc">Plataforma desenvolvida para transmitir acolhimento e profissionalismo, facilitando o agendamento de consultas e destacando serviços especializados.</p>
+                    </div>
+                </a>
+                <a href="trabalhos/guilherme-chiarato.html" class="work" data-work data-tags="Advocacia" data-transition="Guilherme Chiarato" data-cursor-label="Ver projeto">
+                    <div class="work__media" data-tilt>
+                        <div class="work__frame"><img data-parallax src="assets/img/projetos/guilherme-chiarato.webp" srcset="assets/img/projetos/guilherme-chiarato-640.webp 640w, assets/img/projetos/guilherme-chiarato.webp 1200w, assets/img/projetos/guilherme-chiarato-1920.webp 1920w" sizes="(min-width: 860px) 60vw, 100vw" width="1200" height="750" loading="lazy" decoding="async" alt="Página inicial do site Guilherme Chiarato"></div>
+                    </div>
+                    <div class="work__cap">
+                        <span class="work__num mono muted tabular">03</span>
+                        <span class="work__name">Guilherme Chiarato</span>
+                        <span class="work__tags mono muted">Advocacia</span>
+                        <p class="work__desc">Design focado em transmitir seriedade e transparência. Plataforma desenvolvida para destacar a atuação jurídica e captar clientes em meio digital.</p>
+                    </div>
+                </a>
+                <a href="trabalhos/banda-untold.html" class="work" data-work data-tags="Música" data-transition="Banda Untold" data-cursor-label="Ver projeto">
+                    <div class="work__media" data-tilt>
+                        <div class="work__frame"><img data-parallax src="assets/img/projetos/banda-untold.webp" srcset="assets/img/projetos/banda-untold-640.webp 640w, assets/img/projetos/banda-untold.webp 1200w, assets/img/projetos/banda-untold-1920.webp 1920w" sizes="(min-width: 860px) 60vw, 100vw" width="1200" height="750" loading="lazy" decoding="async" alt="Página inicial do site Banda Untold"></div>
+                    </div>
+                    <div class="work__cap">
+                        <span class="work__num mono muted tabular">04</span>
+                        <span class="work__name">Banda Untold</span>
+                        <span class="work__tags mono muted">Música</span>
+                        <p class="work__desc">Presença digital imersiva que reflete a identidade musical da banda, reunindo galeria, agenda de shows e material para contratantes.</p>
+                    </div>
+                </a>
+                <a href="trabalhos/capinzaiki-imobiliaria.html" class="work" data-work data-tags="Imobiliária|Website" data-transition="Capinzaiki Imobiliária" data-cursor-label="Ver projeto">
+                    <div class="work__media" data-tilt>
+                        <div class="work__frame"><img data-parallax src="assets/img/projetos/capinzaiki-imobiliaria.webp" srcset="assets/img/projetos/capinzaiki-imobiliaria-640.webp 640w, assets/img/projetos/capinzaiki-imobiliaria.webp 1200w" sizes="(min-width: 860px) 60vw, 100vw" width="1200" height="750" loading="lazy" decoding="async" alt="Página inicial do site Capinzaiki Imobiliária"></div>
+                    </div>
+                    <div class="work__cap">
+                        <span class="work__num mono muted tabular">05</span>
+                        <span class="work__name">Capinzaiki Imobiliária</span>
+                        <span class="work__tags mono muted">Imobiliária · Website</span>
+                        <p class="work__desc">Site do gestor imobiliário Felix Capinzaiki, com imóveis à venda, locação e lançamentos em Jaú e região, e contato direto pelo WhatsApp.</p>
+                    </div>
+                </a>
+            </div>
+        </section>
 
-                    <!-- Projeto: Maira Justo -->
-                    <a href="https://mairajusto.vercel.app/" target="_blank" rel="noopener noreferrer" class="group project-card block bg-cream rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-shadow duration-500 border border-green-accent/10">
-                        <div class="relative w-full aspect-[16/10] overflow-hidden bg-green">
-                            <img src="assets/img/projetos/maira-justo.webp" srcset="assets/img/projetos/maira-justo-640.webp 640w, assets/img/projetos/maira-justo.webp 1200w" sizes="(min-width: 1280px) 600px, (min-width: 768px) 50vw, 100vw" width="1200" height="750" loading="lazy" decoding="async" alt="Página inicial do site Maira Justo" class="w-full h-full object-cover object-top opacity-90 project-image transition-transform duration-700 ease-out">
-                            <div class="absolute inset-0 bg-green/10 group-hover:bg-transparent transition-colors duration-500"></div>
-                            <div class="absolute top-4 left-4 flex flex-wrap gap-2">
-                                <span class="bg-cream/90 backdrop-blur text-green text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">Estética &amp; Doula</span>
-                            </div>
-                            <div class="absolute inset-0 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <div class="bg-cream text-green w-16 h-16 rounded-full flex items-center justify-center shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                    <i class="ph ph-arrow-up-right text-2xl" aria-hidden="true"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-8">
-                            <h3 class="text-2xl font-bold font-heading mb-3 text-green group-hover:text-green-light transition-colors">Maira Justo</h3>
-                            <p class="text-green/70 mb-6 line-clamp-2">Plataforma desenvolvida para transmitir acolhimento e profissionalismo, facilitando o agendamento de consultas e destacando serviços especializados.</p>
-                            <div class="flex items-center text-sm font-semibold text-green-light uppercase tracking-wider gap-2">
-                                Acessar site <i class="ph ph-arrow-right" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                    </a>
-
-                    <!-- Projeto: Guilherme Chiarato -->
-                    <a href="https://guihermechiarato.vercel.app/" target="_blank" rel="noopener noreferrer" class="group project-card block bg-cream rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-shadow duration-500 border border-green-accent/10">
-                        <div class="relative w-full aspect-[16/10] overflow-hidden bg-green">
-                            <img src="assets/img/projetos/guilherme-chiarato.webp" srcset="assets/img/projetos/guilherme-chiarato-640.webp 640w, assets/img/projetos/guilherme-chiarato.webp 1200w" sizes="(min-width: 1280px) 600px, (min-width: 768px) 50vw, 100vw" width="1200" height="750" loading="lazy" decoding="async" alt="Página inicial do site Guilherme Chiarato" class="w-full h-full object-cover object-top opacity-90 project-image transition-transform duration-700 ease-out">
-                            <div class="absolute inset-0 bg-green/10 group-hover:bg-transparent transition-colors duration-500"></div>
-                            <div class="absolute top-4 left-4 flex flex-wrap gap-2">
-                                <span class="bg-cream/90 backdrop-blur text-green text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">Advocacia</span>
-                            </div>
-                            <div class="absolute inset-0 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <div class="bg-cream text-green w-16 h-16 rounded-full flex items-center justify-center shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                    <i class="ph ph-arrow-up-right text-2xl" aria-hidden="true"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-8">
-                            <h3 class="text-2xl font-bold font-heading mb-3 text-green group-hover:text-green-light transition-colors">Guilherme Chiarato</h3>
-                            <p class="text-green/70 mb-6 line-clamp-2">Design focado em transmitir seriedade e transparência. Plataforma desenvolvida para destacar a atuação jurídica e captar clientes em meio digital.</p>
-                            <div class="flex items-center text-sm font-semibold text-green-light uppercase tracking-wider gap-2">
-                                Acessar site <i class="ph ph-arrow-right" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                    </a>
-
-                    <!-- Projeto: Banda Untold -->
-                    <a href="https://www.bandauntold.com/" target="_blank" rel="noopener noreferrer" class="group project-card block bg-cream rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-shadow duration-500 border border-green-accent/10">
-                        <div class="relative w-full aspect-[16/10] overflow-hidden bg-green">
-                            <img src="assets/img/projetos/banda-untold.webp" srcset="assets/img/projetos/banda-untold-640.webp 640w, assets/img/projetos/banda-untold.webp 1200w" sizes="(min-width: 1280px) 600px, (min-width: 768px) 50vw, 100vw" width="1200" height="750" loading="lazy" decoding="async" alt="Página inicial do site Banda Untold" class="w-full h-full object-cover object-top opacity-90 project-image transition-transform duration-700 ease-out">
-                            <div class="absolute inset-0 bg-green/10 group-hover:bg-transparent transition-colors duration-500"></div>
-                            <div class="absolute top-4 left-4 flex flex-wrap gap-2">
-                                <span class="bg-cream/90 backdrop-blur text-green text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">Música</span>
-                            </div>
-                            <div class="absolute inset-0 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <div class="bg-cream text-green w-16 h-16 rounded-full flex items-center justify-center shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                    <i class="ph ph-arrow-up-right text-2xl" aria-hidden="true"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-8">
-                            <h3 class="text-2xl font-bold font-heading mb-3 text-green group-hover:text-green-light transition-colors">Banda Untold</h3>
-                            <p class="text-green/70 mb-6 line-clamp-2">Presença digital imersiva que reflete a identidade musical da banda, reunindo galeria, agenda de shows e material para contratantes.</p>
-                            <div class="flex items-center text-sm font-semibold text-green-light uppercase tracking-wider gap-2">
-                                Acessar site <i class="ph ph-arrow-right" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                    </a>
-
-                    <!-- Projeto: Capinzaiki Imobiliária -->
-                    <a href="https://www.capinzaiki.com.br/" target="_blank" rel="noopener noreferrer" class="group project-card block bg-cream rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-shadow duration-500 border border-green-accent/10">
-                        <div class="relative w-full aspect-[16/10] overflow-hidden bg-green">
-                            <img src="assets/img/projetos/capinzaiki-imobiliaria.webp" srcset="assets/img/projetos/capinzaiki-imobiliaria-640.webp 640w, assets/img/projetos/capinzaiki-imobiliaria.webp 1200w" sizes="(min-width: 1280px) 600px, (min-width: 768px) 50vw, 100vw" width="1200" height="750" loading="lazy" decoding="async" alt="Página inicial do site Capinzaiki Imobiliária" class="w-full h-full object-cover object-top opacity-90 project-image transition-transform duration-700 ease-out">
-                            <div class="absolute inset-0 bg-green/10 group-hover:bg-transparent transition-colors duration-500"></div>
-                            <div class="absolute top-4 left-4 flex flex-wrap gap-2">
-                                <span class="bg-cream/90 backdrop-blur text-green text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">Imobiliária</span>
-                                <span class="bg-cream/90 backdrop-blur text-green text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">Website</span>
-                            </div>
-                            <div class="absolute inset-0 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <div class="bg-cream text-green w-16 h-16 rounded-full flex items-center justify-center shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                    <i class="ph ph-arrow-up-right text-2xl" aria-hidden="true"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-8">
-                            <h3 class="text-2xl font-bold font-heading mb-3 text-green group-hover:text-green-light transition-colors">Capinzaiki Imobiliária</h3>
-                            <p class="text-green/70 mb-6 line-clamp-2">Site do gestor imobiliário Felix Capinzaiki, com imóveis à venda, locação e lançamentos em Jaú e região, e contato direto pelo WhatsApp.</p>
-                            <div class="flex items-center text-sm font-semibold text-green-light uppercase tracking-wider gap-2">
-                                Acessar site <i class="ph ph-arrow-right" aria-hidden="true"></i>
-                            </div>
-                        </div>
+        <section class="contact on-dark wrap" data-section="Contato" style="padding-bottom: 0">
+            <div class="contact__label mono muted"><span>( Próximo passo )</span></div>
+            <h2 class="contact__title" data-split="words">Gostou do que <span class="serif">viu?</span></h2>
+            <div class="contact__row">
+                <p class="contact__text" data-reveal="up">
+                    O próximo site desta lista pode ser o seu. Vamos construir juntos a ferramenta que vai escalar o seu negócio.
+                </p>
+                <div class="contact__cta" data-reveal="fade">
+                    <a href="https://wa.me/5514997464443?text=Ol%C3%A1%2C%20vi%20seu%20portf%C3%B3lio%20completo%20e%20gostaria%20de%20um%20or%C3%A7amento!" target="_blank" rel="noopener" class="cta-circle magnetic" data-magnetic-strength="0.45" data-cursor="hide">
+                        <svg class="cta-circle__ring" viewBox="0 0 200 200" aria-hidden="true">
+                            <defs><path id="circulo" d="M100,100 m-88,0 a88,88 0 1,1 176,0 a88,88 0 1,1 -176,0"/></defs>
+                            <text font-family="Geist Mono, monospace" font-size="9.4" letter-spacing="3.1" fill="currentColor"><textPath href="#circulo">FALAR COM GABRIEL • WHATSAPP • FALAR COM GABRIEL • WHATSAPP •</textPath></text>
+                        </svg>
+                        <span class="cta-circle__fill" aria-hidden="true"></span>
+                        <span class="cta-circle__label magnetic-in">Falar com Gabriel no WhatsApp <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17 17 7M8 7h9v9"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17 17 7M8 7h9v9"/></svg></span></span>
                     </a>
                 </div>
             </div>
         </section>
-
-        <section class="py-24 px-6 lg:px-12 bg-cream text-green text-center relative overflow-hidden rounded-t-[3rem] lg:rounded-t-[5rem] -mt-10 border-t border-green-accent/20 shadow-[0_-20px_40px_rgba(0,0,0,0.03)]">
-            <div class="max-w-3xl mx-auto relative z-10">
-                <h2 class="text-4xl lg:text-6xl font-bold font-heading mb-6 text-green">Gostou do que viu?</h2>
-                <p class="text-xl text-green-light font-medium mb-10">
-                    O próximo site desta lista pode ser o seu. Vamos construir juntos a ferramenta que vai escalar o seu negócio.
-                </p>
-                <a href="https://wa.me/5514997464443?text=Ol%C3%A1%2C%20vi%20seu%20portf%C3%B3lio%20completo%20e%20gostaria%20de%20um%20or%C3%A7amento!" target="_blank" rel="noopener" class="inline-block px-10 py-5 bg-green text-cream rounded-full font-bold text-lg hover:bg-green-light hover:scale-105 transition-all shadow-xl shadow-green/20">
-                    Falar com Gabriel no WhatsApp
-                </a>
-            </div>
-        </section>
     </main>
 
-    <footer class="bg-green border-t border-green-light text-cream/80 py-8 px-6 lg:px-12">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <p class="font-medium">© 2026 Gabriel Capinzaiki. Todos os direitos reservados.</p>
-            <div class="flex gap-6 text-2xl">
-                <a href="https://www.instagram.com/gabrielqmc/" target="_blank" rel="noopener" class="hover:text-cream transition-colors" aria-label="Instagram"><i class="ph ph-instagram-logo" aria-hidden="true"></i></a>
-                <a href="https://www.linkedin.com/in/gabrielqueirozmc/" target="_blank" rel="noopener" class="hover:text-cream transition-colors" aria-label="LinkedIn"><i class="ph ph-linkedin-logo" aria-hidden="true"></i></a>
-                <a href="https://www.behance.net/gabrielqueirozm" target="_blank" rel="noopener" class="hover:text-cream transition-colors" aria-label="Behance"><i class="ph ph-behance-logo" aria-hidden="true"></i></a>
+    <footer class="footer on-dark wrap" data-section="Contato">
+        <div class="footer__grid mono">
+            <div class="footer__col">
+                <span class="muted">Redes</span>
+                <a href="https://www.instagram.com/gabrielqmc/" target="_blank" rel="noopener" aria-label="Instagram"><span class="roll">Instagram</span></a>
+                <a href="https://www.linkedin.com/in/gabrielqueirozmc/" target="_blank" rel="noopener" aria-label="LinkedIn"><span class="roll">LinkedIn</span></a>
+                <a href="https://www.behance.net/gabrielqueirozm" target="_blank" rel="noopener" aria-label="Behance"><span class="roll">Behance</span></a>
+            </div>
+            <div class="footer__col">
+                <span class="muted">Contato</span>
+                <a href="https://wa.me/5514997464443?text=Ol%C3%A1%2C%20tenho%20interesse%20em%20desenvolver%20um%20site%20para%20o%20meu%20neg%C3%B3cio!" target="_blank" rel="noopener"><span class="roll">WhatsApp</span></a>
+            </div>
+            <div class="footer__col">
+                <span class="muted">Horário local</span>
+                <span class="tabular" data-clock>--:--:--</span>
+            </div>
+            <div class="footer__col" style="align-items:flex-end">
+                <span class="muted">© 2026 Gabriel Capinzaiki</span>
+                <span class="muted">Todos os direitos reservados.</span>
+                <a href="#" data-top style="margin-top:8px"><span class="roll">Voltar ao topo ↑</span></a>
             </div>
         </div>
+        <div class="footer__mark" aria-hidden="true" data-footer-mark>Capinzaiki</div>
     </footer>
 
-    <script>
-        // Menu mobile: abre/fecha e fecha ao clicar em um link
-        (function () {
-            var botao = document.getElementById('menu-toggle');
-            var menu = document.getElementById('menu-mobile');
-            if (!botao || !menu) return;
-            function definir(aberto) {
-                menu.classList.toggle('hidden', !aberto);
-                botao.setAttribute('aria-expanded', aberto ? 'true' : 'false');
-                botao.setAttribute('aria-label', aberto ? 'Fechar menu' : 'Abrir menu');
-                botao.querySelector('i').className = 'ph ' + (aberto ? 'ph-x' : 'ph-list');
-            }
-            botao.addEventListener('click', function () { definir(menu.classList.contains('hidden')); });
-            menu.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { definir(false); }); });
-            document.addEventListener('keydown', function (e) { if (e.key === 'Escape') definir(false); });
-        })();
-    </script>
+    <canvas class="preview-gl" data-preview-gl aria-hidden="true"></canvas>
+
+    <script src="assets/js/vendor/gsap.min.js?v=3.13.0" defer></script>
+    <script src="assets/js/vendor/ScrollTrigger.min.js?v=3.13.0" defer></script>
+    <script src="assets/js/vendor/lenis.min.js?v=1.3.19" defer></script>
+    <script src="assets/js/main.js?v=13fa7bcd" defer></script>
 
 </body>
 </html>
