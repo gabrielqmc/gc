@@ -170,7 +170,14 @@
     secaoTema = nome in PALETAS.claro ? nome : 'base';
     const alvo = PALETAS[modo()][secaoTema];
     if (imediato || reduced) { gsap.killTweensOf(tema); Object.assign(tema, alvo); escreverTema(); return; }
-    gsap.to(tema, { ...alvo, duration: 1.3, ease: 'power2.inOut', overwrite: true, onUpdate: escreverTema });
+    // Em telas de toque a transição é um pouco mais curta e grava as cores a cada
+    // 2 quadros: trocar as variáveis recalcula o estilo da página inteira.
+    let quadro = 0;
+    const gravar = fine ? escreverTema : () => { if (quadro++ % 2 === 0) escreverTema(); };
+    gsap.to(tema, {
+      ...alvo, duration: fine ? 1.3 : 0.9, ease: 'power2.inOut', overwrite: true,
+      onUpdate: gravar, onComplete: escreverTema,
+    });
   }
   // Converte '#rrggbb' ou 'rgb(a)(r, g, b)' em [r, g, b] de 0 a 1
   const paraRgb = (cor) => {
@@ -907,7 +914,9 @@
      ------------------------------------------------------------------------ */
   function galeriaGL() {
     const imgs = $$('img[data-gl]');
-    if (!imgs.length || reduced) return;
+    // Só com mouse: em telas de toque a rolagem nativa roda fora do JavaScript e
+    // as imagens desenhadas por cima ficariam atrasadas (ver imagensToque()).
+    if (!imgs.length || reduced || !fine) return;
 
     const canvas = d.createElement('canvas');
     canvas.className = 'gl-stage';
@@ -1154,12 +1163,46 @@
   }
 
   /* ------------------------------------------------------------------------
+     Imagens dos projetos em telas de toque (sem WebGL, leve e sem atraso):
+     preto e branco que ganha cor no centro da tela, inclinação suave pela
+     velocidade da rolagem e entrada com máscara.
+     ------------------------------------------------------------------------ */
+  function imagensToque() {
+    const caixas = $$('[data-gl-media]');
+    if (!caixas.length || fine || reduced) return;
+    h.classList.add('sem-gl');
+    caixas.forEach((caixa) => {
+      ST.create({ trigger: caixa, start: 'top 68%', end: 'bottom 32%', toggleClass: 'is-cor' });
+      gsap.fromTo(caixa, { clipPath: 'inset(100% 0% 0% 0%)' }, {
+        clipPath: 'inset(0% 0% 0% 0%)', duration: 1.2, ease: 'expo.inOut',
+        scrollTrigger: { trigger: caixa, start: 'top 92%', once: true },
+      });
+    });
+    // Inclinação: segue a velocidade da rolagem e volta suavemente a zero.
+    // Aplicada direto no transform de cada imagem (sem variável CSS no <html>,
+    // que obrigaria o navegador a recalcular o estilo da página inteira).
+    const imgsToque = caixas.map((c) => $('img', c)).filter(Boolean);
+    let inclinacao = 0;
+    let alvo = 0;
+    ST.create({ start: 0, end: 'max', onUpdate: (s) => { alvo = clamp(s.getVelocity() / -320, -4, 4); } });
+    gsap.ticker.add(() => {
+      alvo *= 0.9;
+      const nova = lerp(inclinacao, alvo, 0.15);
+      if (Math.abs(nova - inclinacao) < 0.005 && Math.abs(nova) < 0.01) return;
+      inclinacao = nova;
+      const t = `skewY(${inclinacao.toFixed(2)}deg) scale(1.04)`;
+      for (const img of imgsToque) img.style.transform = t;
+    });
+  }
+
+  /* ------------------------------------------------------------------------
      Início
      ------------------------------------------------------------------------ */
   heroCanvas();
   heroPeso();
   filtros();
   galeriaGL();
+  imagensToque();
 
   const comecar = veioDeTransicao ? chegar() : rodarLoader();
   comecar.then(() => {
