@@ -59,3 +59,17 @@ export function caminhoVariante(imagem, largura) {
 export function existe(relativo) {
   return Boolean(relativo) && fs.existsSync(path.join(RAIZ, relativo));
 }
+
+/** Encontra projetos pelo nome, slug ou link (ignora acentos, maiúsculas, http/https, "www." e barra final). */
+export function encontrarProjetos(projetos, busca) {
+  const normalizarUrl = (u) => String(u).toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/+$/, '');
+  const alvo = slugify(busca);
+  return projetos.filter((p) =>
+    p.slug === busca ||
+    slugify(p.nome || '') === alvo ||
+    normalizarUrl(p.url) === normalizarUrl(busca));
+}
+
+export function listarProjetos(projetos) {
+  return projetos.map((p) => `  - ${p.nome}  (slug: ${p.slug}, ${p.url})`).join('\n');
+}

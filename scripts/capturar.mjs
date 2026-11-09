@@ -2,7 +2,7 @@
 //
 // Uso:
 //   node scripts/capturar.mjs                 -> só os projetos que ainda não têm imagem
-//   node scripts/capturar.mjs --slug maira-justo
+//   node scripts/capturar.mjs --projeto "Maira Justo"   -> refaz só esse (nome, slug ou link)
 //   node scripts/capturar.mjs --todos         -> refaz o print de todos os projetos
 //
 // Se o projeto não tiver "nome" ou "descricao" no projetos.json, eles são
@@ -11,7 +11,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import sharp from 'sharp';
 import { chromium } from 'playwright';
-import { RAIZ, PASTA_PRINTS, lerDados, salvarDados, lerArgs, existe, caminhoVariante } from './lib.mjs';
+import { RAIZ, PASTA_PRINTS, lerDados, salvarDados, lerArgs, existe, caminhoVariante, encontrarProjetos, listarProjetos } from './lib.mjs';
 
 const LARGURAS = [1200, 640];
 const VIEWPORT = { width: 1440, height: 900 }; // 16:10, mesma proporção dos cards
@@ -19,14 +19,13 @@ const VIEWPORT = { width: 1440, height: 900 }; // 16:10, mesma proporção dos c
 const args = lerArgs();
 const dados = lerDados();
 
-const alvos = dados.projetos.filter((p) => {
-  if (args.slug) return p.slug === args.slug;
-  if (args.todos) return true;
-  return !existe(p.imagem);
-});
+const busca = typeof args.projeto === 'string' ? args.projeto.trim() : '';
+const alvos = busca
+  ? encontrarProjetos(dados.projetos, busca)
+  : dados.projetos.filter((p) => args.todos || !existe(p.imagem));
 
-if (args.slug && alvos.length === 0) {
-  console.error(`Nenhum projeto com slug "${args.slug}".`);
+if (busca && alvos.length !== 1) {
+  console.error(`${alvos.length ? 'Mais de um' : 'Nenhum'} projeto corresponde a "${busca}". Use o nome, o slug ou o link exatamente como abaixo:\n${listarProjetos(dados.projetos)}`);
   process.exit(1);
 }
 if (alvos.length === 0) {

@@ -18,6 +18,10 @@ on:
         required: false
         type: boolean
         default: false
+      projeto:
+        description: "Ou refazer o print de UM projeto (nome, slug ou link)"
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -43,9 +47,14 @@ jobs:
           npx playwright install --with-deps chromium
 
       - name: Tirar prints
+        env:
+          REFAZER_TODOS: ${{ inputs.refazer_prints }}
+          PROJETO: ${{ inputs.projeto }}
         run: |
-          if [ "${{ inputs.refazer_prints }}" = "true" ]; then
+          if [ "$REFAZER_TODOS" = "true" ]; then
             node scripts/capturar.mjs --todos
+          elif [ -n "$PROJETO" ]; then
+            node scripts/capturar.mjs --projeto "$PROJETO"
           else
             node scripts/capturar.mjs
           fi
