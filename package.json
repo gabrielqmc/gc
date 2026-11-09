@@ -7,7 +7,8 @@
     "capturar": "node scripts/capturar.mjs",
     "adicionar": "node scripts/adicionar.mjs",
     "novo": "node scripts/adicionar.mjs",
-    "prints:todos": "node scripts/capturar.mjs --todos"
+    "prints:todos": "node scripts/capturar.mjs --todos",
+    "remover": "node scripts/remover.mjs"
   },
   "author": "Gabriel Capinzaiki",
   "devDependencies": {

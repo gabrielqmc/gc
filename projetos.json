@@ -56,13 +56,14 @@
       "slug": "capinzaiki-imobiliaria",
       "nome": "Capinzaiki Imobiliária",
       "url": "https://www.capinzaiki.com.br/",
-      "descricao": "Site imobiliário com busca de imóveis por tipo de negócio, valor e cidade, vitrine de imóveis e contato direto pelo WhatsApp.",
+      "descricao": "Site do gestor imobiliário Felix Capinzaiki, com imóveis à venda, locação e lançamentos em Jaú e região, e contato direto pelo WhatsApp.",
       "tags": [
         "Imobiliária",
         "Website"
       ],
       "destaque": false,
-      "imagem": "assets/img/projetos/capinzaiki-imobiliaria.webp"
+      "imagem": "assets/img/projetos/capinzaiki-imobiliaria.webp",
+      "capturadoEm": "2026-11-09"
     }
   ],
   "galeria": []

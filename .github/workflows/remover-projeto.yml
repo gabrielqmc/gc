@@ -1,0 +1,50 @@
+# Remove um site do portfólio a partir de um formulário no GitHub:
+# aba "Actions" > "Remover projeto do portfólio" > "Run workflow".
+# O robô tira o card, apaga o print, gera as páginas e publica tudo sozinho.
+name: Remover projeto do portfólio
+
+on:
+  workflow_dispatch:
+    inputs:
+      projeto:
+        description: "Nome, slug ou link do projeto a remover (ex.: Maira Justo)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: portfolio
+  cancel-in-progress: false
+
+jobs:
+  remover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Remover projeto e gerar o site
+        env:
+          PROJETO: ${{ inputs.projeto }}
+        run: |
+          node scripts/remover.mjs --projeto "$PROJETO"
+          node scripts/build.mjs
+
+      - name: Publicar
+        env:
+          PROJETO: ${{ inputs.projeto }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Remove projeto do portfólio: $PROJETO"
+          git push
