@@ -35,18 +35,6 @@
       "video": "assets/video/projetos/the-rain-oasis.mp4"
     },
     {
-      "slug": "banda-untold",
-      "nome": "Banda Untold",
-      "url": "https://www.bandauntold.com/",
-      "descricao": "Presença digital imersiva que reflete a identidade musical da banda, reunindo galeria, agenda de shows e material para contratantes.",
-      "tags": [
-        "Música"
-      ],
-      "destaque": false,
-      "imagem": "assets/img/projetos/banda-untold.webp",
-      "video": "assets/video/projetos/banda-untold.mp4"
-    },
-    {
       "slug": "gerlany-melo",
       "nome": "Dra. Gerlany Melo",
       "url": "https://gerlanymelo.vercel.app/",
@@ -59,6 +47,18 @@
       "imagem": "assets/img/projetos/gerlany-melo.webp",
       "capturadoEm": "2026-11-09",
       "video": "assets/video/projetos/gerlany-melo.mp4"
+    },
+    {
+      "slug": "banda-untold",
+      "nome": "Banda Untold",
+      "url": "https://www.bandauntold.com/",
+      "descricao": "Presença digital imersiva que reflete a identidade musical da banda, reunindo galeria, agenda de shows e material para contratantes.",
+      "tags": [
+        "Música"
+      ],
+      "destaque": false,
+      "imagem": "assets/img/projetos/banda-untold.webp",
+      "video": "assets/video/projetos/banda-untold.mp4"
     },
     {
       "slug": "maira-justo",
