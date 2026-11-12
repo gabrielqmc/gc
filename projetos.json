@@ -58,7 +58,8 @@
       ],
       "destaque": false,
       "imagem": "assets/img/projetos/banda-untold.webp",
-      "video": "assets/video/projetos/banda-untold.mp4"
+      "video": "assets/video/projetos/banda-untold.mp4",
+      "capturadoEm": "2026-11-12"
     },
     {
       "slug": "maira-justo",
