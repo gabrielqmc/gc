@@ -8,6 +8,20 @@
   },
   "projetos": [
     {
+      "slug": "capinzaiki-imobiliaria",
+      "nome": "Capinzaiki Imobiliária",
+      "url": "https://www.capinzaiki.com.br/",
+      "descricao": "Site do gestor imobiliário Felix Capinzaiki, com imóveis à venda, locação e lançamentos em Jaú e região, e contato direto pelo WhatsApp.",
+      "tags": [
+        "Imobiliária",
+        "Website"
+      ],
+      "destaque": false,
+      "imagem": "assets/img/projetos/capinzaiki-imobiliaria.webp",
+      "capturadoEm": "2026-11-09",
+      "video": "assets/video/projetos/capinzaiki-imobiliaria.mp4"
+    },
+    {
       "slug": "the-rain-oasis",
       "nome": "The Rain",
       "url": "https://the-rain-oasis.vercel.app/",
@@ -19,6 +33,18 @@
       "imagem": "assets/img/projetos/the-rain-oasis.webp",
       "capturadoEm": "2026-11-12",
       "video": "assets/video/projetos/the-rain-oasis.mp4"
+    },
+    {
+      "slug": "banda-untold",
+      "nome": "Banda Untold",
+      "url": "https://www.bandauntold.com/",
+      "descricao": "Presença digital imersiva que reflete a identidade musical da banda, reunindo galeria, agenda de shows e material para contratantes.",
+      "tags": [
+        "Música"
+      ],
+      "destaque": false,
+      "imagem": "assets/img/projetos/banda-untold.webp",
+      "video": "assets/video/projetos/banda-untold.mp4"
     },
     {
       "slug": "gerlany-melo",
@@ -57,32 +83,6 @@
       "destaque": false,
       "imagem": "assets/img/projetos/guilherme-chiarato.webp",
       "video": "assets/video/projetos/guilherme-chiarato.mp4"
-    },
-    {
-      "slug": "banda-untold",
-      "nome": "Banda Untold",
-      "url": "https://www.bandauntold.com/",
-      "descricao": "Presença digital imersiva que reflete a identidade musical da banda, reunindo galeria, agenda de shows e material para contratantes.",
-      "tags": [
-        "Música"
-      ],
-      "destaque": false,
-      "imagem": "assets/img/projetos/banda-untold.webp",
-      "video": "assets/video/projetos/banda-untold.mp4"
-    },
-    {
-      "slug": "capinzaiki-imobiliaria",
-      "nome": "Capinzaiki Imobiliária",
-      "url": "https://www.capinzaiki.com.br/",
-      "descricao": "Site do gestor imobiliário Felix Capinzaiki, com imóveis à venda, locação e lançamentos em Jaú e região, e contato direto pelo WhatsApp.",
-      "tags": [
-        "Imobiliária",
-        "Website"
-      ],
-      "destaque": false,
-      "imagem": "assets/img/projetos/capinzaiki-imobiliaria.webp",
-      "capturadoEm": "2026-11-09",
-      "video": "assets/video/projetos/capinzaiki-imobiliaria.mp4"
     }
   ],
   "galeria": []
