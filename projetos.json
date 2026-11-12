@@ -8,6 +8,17 @@
   },
   "projetos": [
     {
+      "slug": "the-rain-oasis",
+      "nome": "The Rain",
+      "url": "https://the-rain-oasis.vercel.app/",
+      "descricao": "The Rain — Oasis Tribute: banda cover de Oasis de Jaú (SP). A experiência de um show da era de ouro dos irmãos Gallagher para bares, festivais e eventos. Agenda, vídeos e contratação.",
+      "tags": [],
+      "destaque": true,
+      "imagem": "assets/img/projetos/the-rain-oasis.webp",
+      "capturadoEm": "2026-11-12",
+      "video": "assets/video/projetos/the-rain-oasis.mp4"
+    },
+    {
       "slug": "gerlany-melo",
       "nome": "Dra. Gerlany Melo",
       "url": "https://gerlanymelo.vercel.app/",
